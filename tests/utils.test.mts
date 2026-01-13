@@ -71,7 +71,7 @@ describe('emptyDir & isEmpty', () => {
   })
 })
 
-describe('editFile & editJsonFile', () => {
+describe('editFile & editJsonFile & readJsonFile', () => {
   it('editFile edits text file', async () => {
     const file = join(TMP_DIR, 'a.txt')
     await writeFile(file, 'hello')
@@ -142,5 +142,137 @@ describe('copyDirAsync', () => {
     const files = await readdir(dest)
     expect(files).toContain('.gitignore')
     expect(files).not.toContain('a.txt')
+  })
+})
+
+/* ---------------------------------- */
+/* parseGitHubRepo                       */
+/* ---------------------------------- */
+
+describe('parseGitHubRepo', () => {
+  it('short url', () => {
+    expect(utils.parseGitHubRepo('github.com:vuejs/core.git')).toEqual([ 'vuejs', 'core' ])
+  })
+  it('https url', () => {
+    expect(utils.parseGitHubRepo('https://github.com/vuejs/core.git')).toEqual([ 'vuejs', 'core' ])
+  })
+  it('https url without .git', () => {
+    expect(utils.parseGitHubRepo('https://github.com/vuejs/core')).toEqual([ 'vuejs', 'core' ])
+  })
+  it('https url with tree', () => {
+    expect(utils.parseGitHubRepo('https://github.com/vuejs/core/tree/main/packages')).toEqual([ 'vuejs', 'core' ])
+  })
+  it('https url with hash', () => {
+    expect(utils.parseGitHubRepo('https://github.com/vuejs/core#readme')).toEqual([ 'vuejs', 'core' ])
+  })
+  it('https url with query', () => {
+    expect(utils.parseGitHubRepo('https://github.com/vuejs/core?tab=readme-ov-file')).toEqual([ 'vuejs', 'core' ])
+  })
+  it('ssh url', () => {
+    expect(utils.parseGitHubRepo('git@github.com:vuejs/core.git')).toEqual([ 'vuejs', 'core' ])
+  })
+  it('https url without .git', () => {
+    expect(utils.parseGitHubRepo('git@github.com:vuejs/core')).toEqual([ 'vuejs', 'core' ])
+  })
+  it('throws on invalid input', () => {
+    expect(utils.parseGitHubRepo('not-a-repo')).toEqual([])
+    expect(utils.parseGitHubRepo('https://google.com')).toEqual([])
+  })
+})
+
+/* ---------------------------------- */
+/* isTestFile                       */
+/* ---------------------------------- */
+
+describe('isTestFile', () => {
+  describe('directory based', () => {
+    it('matches __tests__ folder (unix)', () => {
+      expect(utils.isTestFile('src/__tests__/foo.ts')).toBe(true)
+    })
+    
+    it('matches __test__ folder (windows)', () => {
+      expect(utils.isTestFile('src\\__test__\\foo.ts')).toBe(true)
+    })
+    
+    it('matches tests folder', () => {
+      expect(utils.isTestFile('packages/core/tests/utils.ts')).toBe(true)
+    })
+    
+    it('matches test folder', () => {
+      expect(utils.isTestFile('packages/core/test/index.ts')).toBe(true)
+    })
+    
+    it('does not match contest or latest', () => {
+      expect(utils.isTestFile('src/contest/foo.ts')).toBe(false)
+      expect(utils.isTestFile('src/latest/foo.ts')).toBe(false)
+    })
+  })
+  
+  describe('file suffix based', () => {
+    it('matches foo.test.ts', () => {
+      expect(utils.isTestFile('foo.test.ts')).toBe(true)
+    })
+    
+    it('matches foo.spec.ts', () => {
+      expect(utils.isTestFile('foo.spec.ts')).toBe(true)
+    })
+    
+    it('matches foo.unit-test.ts', () => {
+      expect(utils.isTestFile('foo.unit-test.ts')).toBe(true)
+    })
+    
+    it('matches foo.e2e-spec.js', () => {
+      expect(utils.isTestFile('foo.e2e-spec.js')).toBe(true)
+    })
+    
+    it('matches foo.test.mts', () => {
+      expect(utils.isTestFile('foo.test.mts')).toBe(true)
+    })
+    
+    it('matches foo.spec.mjs', () => {
+      expect(utils.isTestFile('foo.spec.mjs')).toBe(true)
+    })
+    
+    it('does not match foo.testcase.ts', () => {
+      expect(utils.isTestFile('foo.testcase.ts')).toBe(false)
+    })
+    
+    it('does not match foo.specimen.ts', () => {
+      expect(utils.isTestFile('foo.specimen.ts')).toBe(false)
+    })
+  })
+  
+  describe('vitest special entry files', () => {
+    it('matches vitest.config.ts', () => {
+      expect(utils.isTestFile('vitest.config.ts')).toBe(true)
+    })
+    
+    it('matches vitest.workspace.ts', () => {
+      expect(utils.isTestFile('vitest.workspace.ts')).toBe(true)
+    })
+    
+    it('matches vitest-setup.ts', () => {
+      expect(utils.isTestFile('vitest-setup.ts')).toBe(true)
+    })
+    
+    it('matches vitest.global.ts', () => {
+      expect(utils.isTestFile('vitest.global.ts')).toBe(true)
+    })
+  })
+  
+  describe('negative cases', () => {
+    it('does not match normal source files', () => {
+      expect(utils.isTestFile('src/index.ts')).toBe(false)
+      expect(utils.isTestFile('packages/utils/foo.ts')).toBe(false)
+    })
+    
+    it('does not match test in middle of filename', () => {
+      expect(utils.isTestFile('src/testingUtils.ts')).toBe(false)
+      expect(utils.isTestFile('src/mytesthelper.ts')).toBe(false)
+    })
+    
+    it('does not match vitest in the middle of filename', () => {
+      expect(utils.isTestFile('src/myvitesthelper.ts')).toBe(false)
+    })
   })
 })

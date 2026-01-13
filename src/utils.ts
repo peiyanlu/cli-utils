@@ -1,24 +1,10 @@
 import { SpawnSyncOptionsWithStringEncoding } from 'child_process'
-import { exec, spawnSync } from 'node:child_process'
+import { spawnSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import { copyFile, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { CopyOptions, PkgInfo } from './types.js'
 
-
-export const execAsync = (cmd: string) => {
-  return new Promise<string | undefined>(r => {
-    exec(cmd, (err, stdout) => r(err ? undefined : stdout.trim()))
-  })
-}
-
-export const pkgVersion = (pkg: string) => {
-  return execAsync(`npm view ${ pkg } version`)
-}
-
-export const checkVersion = async (cmd: string) => {
-  return execAsync(`${ cmd } --version`)
-}
 
 export const isValidPackageName = (packageName: string) => {
   return /^(?:@[a-z\d\-*~][a-z\d\-*._~]*\/)?[a-z\d\-~][a-z\d\-._~]*$/.test(packageName)
@@ -73,22 +59,11 @@ export const editJsonFile = <T extends Record<string, any>>(file: string, callba
   })
 }
 
-export const isGitRepo = async (dir?: string) => {
-  const target = dir ? `./${ dir }` : '.'
-  const cmd = `git -C "${ target }" rev-parse --is-inside-work-tree`
-  const res = await execAsync(cmd)
-  return !!res
-}
-
 export const readSubDirs = async (source: string, ignore: string[] = []) => {
   const res = await readdir(source, { withFileTypes: true })
   return res
     .filter(k => k.isDirectory() && !ignore.includes(k.name))
     .map(dir => dir.name)
-}
-
-export const getGitConfig = (key: string, global: boolean = true) => {
-  return execAsync(`git config ${ global ? '--global' : '' } ${ key }`)
 }
 
 export const copyDirAsync = async (src: string, dest: string, options: CopyOptions) => {
@@ -124,13 +99,7 @@ export const readJsonFile = <T extends Record<string, any>>(file: string) => {
   }
 }
 
-/**
- * 通过包管理器执行脚本时生效
- *
- * UserAgent: `process.env.npm_config_user_agent`
- * @param {string | undefined} userAgent
- * @returns {PkgInfo | undefined}
- */
+/** 通过包管理器执行脚本时生效 UserAgent: `process.env.npm_config_user_agent` */
 export const pkgFromUserAgent = (userAgent: string | undefined): PkgInfo | undefined => {
   if (!userAgent) return undefined
   const pkgSpec = userAgent.split(' ')[0]
@@ -138,11 +107,27 @@ export const pkgFromUserAgent = (userAgent: string | undefined): PkgInfo | undef
   return { name, version } satisfies PkgInfo
 }
 
-
-export const runCli = (path: string, args: string[], options?: SpawnSyncOptionsWithStringEncoding) => {
+/** 同步执行 Node CLI（用于测试环境） */
+export const runCliForTest = (path: string, args: string[], options?: SpawnSyncOptionsWithStringEncoding) => {
   return spawnSync('node', [ path, ...args ], {
     env: { ...process.env, _VITE_TEST_CLI: 'true' },
     encoding: 'utf-8',
     ...options,
   })
+}
+
+/** 判断测试文件（夹） */
+export const isTestFile = (name: string) => {
+  return [
+    /(^|[\\/])(test(s?)|__test(s?)__)([\\/]|$)/,
+    /\.([a-zA-Z0-9]+-)?(test|spec)\.m?(ts|js)$/,
+    /^vitest([-.])(.*)\.m?(ts|js)$/,
+  ].some(reg => reg.test(name))
+}
+
+
+export const parseGitHubRepo = (url: string) => {
+  const reg = /github(?:\.com)?[:/](.+?)\/(.+?)(?:[#/?].+?)?(?:\.git)?$/
+  const match = url.trim().match(reg)
+  return match ? match.slice(1, 3) : []
 }
