@@ -2,6 +2,7 @@ import { SpawnSyncOptionsWithStringEncoding } from 'child_process'
 import { spawnSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import { copyFile, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { EOL } from 'node:os'
 import { join, resolve } from 'node:path'
 import { CopyOptions, PkgInfo } from './types.js'
 
@@ -125,9 +126,12 @@ export const isTestFile = (name: string) => {
   ].some(reg => reg.test(name))
 }
 
-
+/** 解析 Github 链接获取 owner 和 repo */
 export const parseGitHubRepo = (url: string) => {
   const reg = /github(?:\.com)?[:/](.+?)\/(.+?)(?:[#/?].+?)?(?:\.git)?$/
   const match = url.trim().match(reg)
   return match ? match.slice(1, 3) : []
 }
+
+/** 基于 EOL 的可多换行函数 */
+export const eol = (n: number = 1) => EOL.repeat(n)

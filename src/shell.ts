@@ -7,6 +7,7 @@ import { ExecAsyncOptions, SpawnAsyncOptions } from './types.js'
 export const dim = (text: string) => styleText([ 'dim' ], text)
 export const red = (text: string) => styleText([ 'red' ], text)
 export const yellow = (text: string) => styleText([ 'yellow' ], text)
+export const underline = (text: string) => styleText([ 'underline' ], text)
 
 
 export const spawnAsync = <T = SpawnOptions>(cmd: string, args: string[], options?: SpawnAsyncOptions<T>) => {
@@ -74,39 +75,17 @@ export const execAsync = <T = ExecOptions>(cmd: string, options?: ExecAsyncOptio
   })
 }
 
-export const runGit = async (args: string[], trim = true) => {
-  return spawnAsync('git', args, { trim })
+
+export const runGit = async (args: string[], options: SpawnAsyncOptions = { trim: true }) => {
+  return spawnAsync('git', args, options)
 }
 
-export const runNpm = (args: string[]) => {
-  return execAsync([ 'npm', ...args ].join(' '))
+export const runNpm = (args: string[], options: ExecAsyncOptions = { trim: true }) => {
+  return execAsync([ 'npm', ...args ].join(' '), options)
 }
 
 
-export const isGitRepo = async (dir?: string) => {
-  const target = dir ? `./${ dir }` : '.'
-  const res = await runGit([
-    '-C',
-    target,
-    'rev-parse',
-    '--is-inside-work-tree',
-  ])
-  return !!res
-}
-
-export const getGitConfig = (key: string, global: boolean = true) => {
-  const g = global ? [ '--global' ] : []
-  return runGit([ 'config', ...g, key ])
-}
-
-export const getGitRemoteUrl = async (remoteName = 'origin') => {
-  return runGit([ 'remote', 'get-url', remoteName ])
-    .catch(_ => runGit([ 'config', '--get', `remote.${ remoteName }.url` ]))
-}
-
-export const pkgVersion = (pkg: string) => {
-  return runNpm([ 'view', pkg, 'version' ])
-}
+export const fixArgs = (args: string) => (args.trim() ? args.trim().split(' ') : [])
 
 export const checkVersion = async (cmd: string) => {
   return execAsync(`${ cmd } --version`)
