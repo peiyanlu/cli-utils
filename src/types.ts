@@ -1,4 +1,4 @@
-import { ExecOptions, SpawnOptions } from 'child_process'
+import { ExecOptionsWithStringEncoding, SpawnOptionsWithoutStdio } from 'node:child_process'
 
 
 export interface CopyOptions {
@@ -14,11 +14,14 @@ export interface PkgInfo {
 }
 
 export interface ExecResultOptions {
+  /** 去掉结果的首尾空格 */
   trim?: boolean
+  /** 仅打印命令，不实际执行命令 */
   dryRun?: boolean
+  /** log: 打印错误信息，返回 undefined; throw: 抛出错误; ignore: 返回 undefined */
   error?: 'log' | 'throw' | 'ignore'
 }
 
-export type SpawnAsyncOptions<T = SpawnOptions> = T & ExecResultOptions
+export type SpawnAsyncOptions = SpawnOptionsWithoutStdio & ExecResultOptions
 
-export type ExecAsyncOptions<T = ExecOptions> = T & ExecResultOptions
+export type ExecAsyncOptions = ExecOptionsWithStringEncoding & ExecResultOptions

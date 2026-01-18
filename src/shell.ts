@@ -1,19 +1,14 @@
-import { ExecOptions, SpawnOptions } from 'child_process'
-import { exec, spawn } from 'node:child_process'
-import { styleText } from 'node:util'
+import { ExecSyncOptionsWithStringEncoding, SpawnSyncOptionsWithStringEncoding } from 'child_process'
+import { exec, execSync, spawn, spawnSync } from 'node:child_process'
+import { dim, red } from './styleText.js'
 import { ExecAsyncOptions, SpawnAsyncOptions } from './types.js'
 
 
-export const dim = (text: string) => styleText([ 'dim' ], text)
-export const red = (text: string) => styleText([ 'red' ], text)
-export const yellow = (text: string) => styleText([ 'yellow' ], text)
-export const underline = (text: string) => styleText([ 'underline' ], text)
-
-
-export const spawnAsync = <T = SpawnOptions>(cmd: string, args: string[], options?: SpawnAsyncOptions<T>) => {
+/** 异步执行 `spawn` 获取字符串类型的结果 */
+export const spawnAsync = (cmd: string, args: string[], options?: SpawnAsyncOptions) => {
   return new Promise<string | undefined>((resolve) => {
     const { trim, error, dryRun, ...others } = options ?? {}
-    const fullCmd = [ cmd, ...args ].join(' ')
+    const fullCmd = stringifyArgs([ cmd, ...args ])
     
     if (dryRun) {
       console.log(`${ dim('[dry-run]') } ${ fullCmd }`)
@@ -23,12 +18,12 @@ export const spawnAsync = <T = SpawnOptions>(cmd: string, args: string[], option
     const child = spawn(cmd, args, { ...others })
     
     let stdout = ''
-    child.stdout?.setEncoding('utf-8')
+    child.stdout.setEncoding('utf-8')
     child.stdout?.on('data', (data) => stdout += (trim ? data.trim() : data))
     
     let stderr = ''
-    child.stderr?.setEncoding('utf-8')
-    child.stderr?.on('data', (data) => stderr += (trim ? data.trim() : data))
+    child.stderr.setEncoding('utf-8')
+    child.stderr.on('data', (data) => stderr += (trim ? data.trim() : data))
     
     child.on('close', (code) => {
       if (stderr) {
@@ -48,45 +43,85 @@ export const spawnAsync = <T = SpawnOptions>(cmd: string, args: string[], option
   })
 }
 
-export const execAsync = <T = ExecOptions>(cmd: string, options?: ExecAsyncOptions<T>) => {
+type ExecAsync = {
+  (cmd: string, options?: ExecAsyncOptions): Promise<string | undefined>
+  (cmd: string, args: string[], options?: ExecAsyncOptions): Promise<string | undefined>
+}
+
+/** 异步执行 `exec` 获取字符串类型的结果 */
+export const execAsync: ExecAsync = (
+  cmd: string,
+  argsOrOptions?: string[] | ExecAsyncOptions,
+  maybeOptions?: ExecAsyncOptions,
+) => {
   return new Promise<string | undefined>((resolve) => {
+    let command: string
+    let options: ExecAsyncOptions | undefined
+    
+    if (Array.isArray(argsOrOptions)) {
+      command = stringifyArgs([ cmd, ...argsOrOptions ])
+      options = maybeOptions
+    } else {
+      command = cmd
+      options = argsOrOptions
+    }
+    
     const { trim, dryRun, error, ...others } = options ?? {}
     
     if (dryRun) {
-      console.log(`${ dim('[dry-run]') } ${ cmd }`)
+      console.log(`${ dim('[dry-run]') } ${ command }`)
       return resolve(undefined)
     }
     
-    exec(cmd, { ...others }, (err, stdout) => {
-      if (err) {
-        const msg = `${ red('execAsync') } ${ dim(cmd) } ${ err.message }`
+    exec(command, { ...others }, (stderr, stdout) => {
+      if (stderr) {
+        const err = `${ red('execAsync') } ${ dim(command) } ${ stderr.message }`
         switch (error) {
           case 'log': {
-            console.error(msg)
+            console.error(err)
             break
           }
           case 'throw': {
-            throw new Error(msg)
+            throw new Error(err)
           }
         }
       }
-      resolve(err ? undefined : trim ? stdout.trim() : stdout)
+      resolve(stderr ? undefined : trim ? stdout.trim() : stdout)
     })
   })
 }
 
-
+/** 基于 {@link spawnAsync} 实现 */
 export const runGit = async (args: string[], options: SpawnAsyncOptions = { trim: true }) => {
   return spawnAsync('git', args, options)
 }
 
+/** 基于 {@link execAsync} 实现 */
 export const runNpm = (args: string[], options: ExecAsyncOptions = { trim: true }) => {
-  return execAsync([ 'npm', ...args ].join(' '), options)
+  return execAsync('npm', args, options)
 }
 
+/** 基于 {@link spawnSync} 实现 */
+export const runGitSync = (args: string[], options?: SpawnSyncOptionsWithStringEncoding) => {
+  const { stdout } = spawnSync('git', args, { encoding: 'utf-8', ...options })
+  return stdout.toString().trim()
+}
 
-export const fixArgs = (args: string) => (args.trim() ? args.trim().split(' ') : [])
+/** 基于 {@link execSync} 实现 */
+export const runNpmSync = (args: string[], options?: ExecSyncOptionsWithStringEncoding) => {
+  const stdout = execSync(stringifyArgs([ 'npm', ...args ]), { encoding: 'utf-8', ...options })
+  return stdout.toString().trim()
+}
 
+/** 将字符串以空格分割为数组 */
+export const parseArgs = (args: string) =>
+  args.trim() ? args.trim().split(' ') : []
+
+/** 将数组以空格拼接为字符串 */
+export const stringifyArgs = (args: string[]) =>
+  args.length ? args.join(' ') : ''
+
+/** 支持所有支持 `--version` 命令的脚本查看版本 */
 export const checkVersion = async (cmd: string) => {
   return execAsync(`${ cmd } --version`)
 }
