@@ -1,10 +1,9 @@
-import { SpawnSyncOptionsWithStringEncoding } from 'child_process'
-import { spawnSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import { copyFile, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { EOL } from 'node:os'
 import { join, resolve } from 'node:path'
-import { CopyOptions, PkgInfo } from './types.js'
+import { runNodeSync } from './shell.js'
+import { CopyOptions, PkgInfo, SpawnSyncWithStringOptions } from './types.js'
 
 
 export const isValidPackageName = (packageName: string) => {
@@ -100,6 +99,24 @@ export const readJsonFile = <T extends Record<string, any>>(file: string) => {
   }
 }
 
+export const getPackageInfo = (pkgName: string, getPkgDir: (pkg: string) => string) => {
+  const pkgDir = resolve(getPkgDir(pkgName))
+  const pkgPath = resolve(pkgDir, 'package.json')
+  const pkg = readJsonFile(pkgPath) as {
+    name: string;
+    version: string;
+    private?: boolean;
+    publishConfig?: {
+      access: string
+      registry: string
+      [key: string]: string
+    };
+  }
+  
+  return { pkg, pkgDir, pkgPath }
+}
+
+
 /** 通过包管理器执行脚本时生效 UserAgent: `process.env.npm_config_user_agent` */
 export const pkgFromUserAgent = (userAgent: string | undefined): PkgInfo | undefined => {
   if (!userAgent) return undefined
@@ -109,10 +126,9 @@ export const pkgFromUserAgent = (userAgent: string | undefined): PkgInfo | undef
 }
 
 /** 同步执行 Node CLI（用于测试环境） */
-export const runCliForTest = (path: string, args: string[], options?: SpawnSyncOptionsWithStringEncoding) => {
-  return spawnSync('node', [ path, ...args ], {
+export const runCliForTest = (path: string, args: string[] = [], options?: SpawnSyncWithStringOptions) => {
+  return runNodeSync([ path, ...args ], {
     env: { ...process.env, _VITE_TEST_CLI: 'true' },
-    encoding: 'utf-8',
     ...options,
   })
 }
@@ -135,3 +151,20 @@ export const parseGitHubRepo = (url: string) => {
 
 /** 基于 EOL 的可多换行函数 */
 export const eol = (n: number = 1) => EOL.repeat(n)
+
+/** `\r\n` 统一为 `\n` */
+const normalizeLineEndings = (s: string) =>
+  s.trim().replace(/\r\n/g, '\n')
+
+/** 将字符串以空格分割为数组 */
+export const parseArgs = (args: string) =>
+  args.trim() ? args.trim().split(' ') : []
+
+/** 将数组以空格拼接为字符串 */
+export const stringifyArgs = (args: string[]) =>
+  args.length ? args.join(' ') : ''
+
+
+/** 去掉模板字符串首尾换行 */
+export const trimTemplate = (str: string) =>
+  str.replace(/^\s*\n+|\n+\s*$/g, '')

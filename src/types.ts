@@ -1,4 +1,4 @@
-import { ExecOptionsWithStringEncoding, SpawnOptionsWithoutStdio } from 'node:child_process'
+import { ExecOptions, ExecSyncOptions, SpawnOptions, SpawnSyncOptions } from 'node:child_process'
 
 
 export interface CopyOptions {
@@ -22,6 +22,10 @@ export interface ExecResultOptions {
   error?: 'log' | 'throw' | 'ignore'
 }
 
-export type SpawnAsyncOptions = SpawnOptionsWithoutStdio & ExecResultOptions
+export type SpawnAsyncWithStringOptions = SpawnOptions & ExecResultOptions
 
-export type ExecAsyncOptions = ExecOptionsWithStringEncoding & ExecResultOptions
+export type ExecAsyncWithStringOptions = Omit<ExecOptions, 'encoding'> & ExecResultOptions
+
+export type SpawnSyncWithStringOptions = Omit<SpawnSyncOptions, 'encoding'> & ExecResultOptions
+
+export type ExecSyncWithStringOptions = Omit<ExecSyncOptions, 'encoding'> & ExecResultOptions
