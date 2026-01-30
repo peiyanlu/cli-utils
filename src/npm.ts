@@ -48,7 +48,7 @@ export const getRegistry = async (pkgDir: string): Promise<string> => {
 export const getAccess = async (pkgDir: string): Promise<'restricted' | 'public'> => {
   const { name, publishConfig = {} } = readJsonFile(join(pkgDir, 'package.json'))
   const { access } = publishConfig
-  return access ?? (name.startsWith('@') ? 'restricted' : 'public')
+  return access || (name.startsWith('@') ? 'restricted' : 'public')
 }
 
 /**

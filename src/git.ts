@@ -1,4 +1,3 @@
-import { spawnSync } from 'node:child_process'
 import { resolve } from 'node:path'
 import { runGit, runGitSync } from './shell.js'
 
@@ -61,7 +60,7 @@ export const getAllRemotes = async () => {
 
 /** 获取默认的远程地址 */
 export const getDefaultRemote = async (branch?: string) => {
-  const targetBranch = branch ?? await getCurrentBranch()
+  const targetBranch = branch || await getCurrentBranch()
   return targetBranch ? await getRemoteForBranch(targetBranch) : undefined
 }
 
@@ -83,16 +82,38 @@ export const fetchAllBranch = (remoteName = 'origin') => {
 }
 
 /**
- * 获取本地所有 tag（不区分远程）
+ * 获取本地所有 tag
  * @returns {Promise<string[]>}
- * @defaults git tag
+ * @defaults git tag --list
  */
-export const getTags = async (): Promise<string[]> => {
-  const tags = await runGit([ 'tag' ])
+export const getLocalTags = async (): Promise<string[]> => {
+  const tags = await runGit([ 'tag', '--list' ])
   return tags
     ? tags
       .split('\n')
-      .sort()
+      .filter(Boolean)
+    : []
+}
+
+/** 获取远程 tags */
+export const getSortedTags = async (
+  match: string = '*',
+  exclude: string = '*-beta.*',
+  sort: 'v:refname' | 'creatordate' = 'v:refname',
+  count: number = 0,
+) => {
+  const res = await runGit([
+    'for-each-ref',
+    '--format=%(refname:short)',
+    `--sort=-${ sort }`,
+    `--exclude=${ exclude }`,
+    `--count=${ count }`,
+    `refs/tags/${ match }`,
+  ])
+  return res
+    ? res
+      .split('\n')
+      .filter(Boolean)
     : []
 }
 
@@ -100,21 +121,12 @@ export const getTags = async (): Promise<string[]> => {
  * 获取远程（或所有 refs）中的 tag
  * 使用 for-each-ref 以支持版本号排序
  * @param {string} match 默认 *
+ * @param {string} exclude 默认 beta
  * @returns {Promise<string[]>}
  * @defaults git for-each-ref --sort=-v:refname --format=%(refname:short) refs/tags/<match>
  */
-export const getRemoteTags = async (match: string = '*'): Promise<string[]> => {
-  const tags = await runGit([
-    'for-each-ref',
-    '--sort=-v:refname',
-    '--format=%(refname:short)',
-    `refs/tags/${ match }`,
-  ])
-  return tags
-    ? tags
-      .split('\n')
-      .sort()
-    : []
+export const getRemoteTags = async (match: string = '*', exclude: string = '*-beta.*'): Promise<string[]> => {
+  return getSortedTags(match, exclude)
 }
 
 /**
@@ -180,7 +192,7 @@ export const getRemote = async (): Promise<{ remoteName: string; remoteUrl: stri
 }
 
 /**
- * 获取最新 tag（基于 git describe）
+ * 获取最新 tag
  *
  * 默认：
  * - 匹配所有 tag
@@ -188,45 +200,59 @@ export const getRemote = async (): Promise<{ remoteName: string; remoteUrl: stri
  * @param {string} match 默认 *
  * @param {string} exclude 默认 beta
  * @returns {Promise<string | undefined>}
- * @defaults git describe --tags --abbrev=0 --match=<match> --exclude=<exclude>
  */
-export const getLatestTag = async (match: string = '*', exclude: string = '*-beta.*'): Promise<string | undefined> => {
-  return runGit([
-    'describe',
-    '--tags',
-    '--abbrev=0',
-    `--match=${ match }`,
-    `--exclude=${ exclude }`,
-  ])
-}
-
-/**
- * 从所有 refs 中获取最新 tag
- * 适用于 git describe 不可靠的场景（如 tag 不在当前分支）
- * @param {string} match
- * @returns {Promise<string | undefined>}
- * @defaults git -c versionsort.suffix=- for-each-ref --count=1 --sort=-v:refname --format=%(refname:short) refs/tags/<match>
- */
-export const getLatestTagFromAllRefs = async (match: string = '*'): Promise<string | undefined> => {
-  return runGit([
-    '-c',
-    'versionsort.suffix=-',
-    'for-each-ref',
-    '--count=1',
-    '--sort=-v:refname',
-    '--format=%(refname:short)',
-    `refs/tags/${ match }`,
-  ])
+export const getLatestTag = async (
+  match: string = '*',
+  exclude: string = '*-beta.*',
+): Promise<string | undefined> => {
+  const [ latestTag ] = await getSortedTags(match, exclude, undefined, 1)
+  return latestTag
 }
 
 /**
  * 获取上一个 tag
- * @param {string} current
+ *
+ * 默认：
+ * - 匹配所有 tag
+ * - 排除 beta 版本
+ * @param {string} latestTag
+ * @param {string} match 默认 *
+ * @param {string} exclude 默认 beta
  * @returns {Promise<string | undefined>}
  */
-export const getPreviousTag = async (current?: string): Promise<string | undefined> => {
-  const sha = await runGit([ 'rev-list', '--tags', current ?? '--skip=1', '--max-count=1' ])
-  return runGit([ 'describe', '--tags', '--abbrev=0', `${ sha }^` ])
+export const getPreviousTag = async (
+  latestTag: string,
+  match: string = '*',
+  exclude: string = '*-beta.*',
+): Promise<string | undefined> => {
+  const all = await getSortedTags(match, exclude, undefined, 2)
+  const index = all.findIndex(k => latestTag === k)
+  return all[index + 1]
+}
+
+/**
+ * 计算 changelog 的 commit 范围
+ * @param {boolean} isIncrement 是否为版本递增发布
+ * @param {string} match tag match
+ * @param {string} exclude tag exclude
+ * @returns {Promise<{from: string, to: string}>}
+ */
+export const resolveChangelogRange = async (
+  isIncrement: boolean = true,
+  match: string = '*',
+  exclude: string = '*-beta.*',
+): Promise<{ from: string; to: string; }> => {
+  const latestTag = await getLatestTag(match, exclude)
+  if (!latestTag) {
+    return { from: '', to: 'HEAD' }
+  }
+  
+  const previousTag = await getPreviousTag(latestTag)
+  if (!isIncrement && previousTag) {
+    return { from: previousTag, to: `${ latestTag }^1` }
+  }
+  
+  return { from: latestTag, to: 'HEAD' }
 }
 
 /**
@@ -236,26 +262,6 @@ export const getPreviousTag = async (current?: string): Promise<string | undefin
  */
 export const getFullHash = (short: string): Promise<string | undefined> => {
   return runGit([ 'rev-parse', short ])
-}
-
-/**
- * 计算 changelog 的 commit 范围
- * @param {boolean} isIncrement 是否为版本递增发布
- * @returns {Promise<{from: string, to: string} | {from: string, to: string} | {from: string, to: string}>}
- */
-export const resolveChangelogRange = async (isIncrement: boolean = true): Promise<{ from: string; to: string }> => {
-  const latestTag = await getLatestTag()
-  const previousTag = await getPreviousTag(latestTag)
-  
-  if (!latestTag) {
-    return { from: '', to: 'HEAD' }
-  }
-  
-  if (!isIncrement && previousTag) {
-    return { from: previousTag, to: `${ latestTag }^1` }
-  }
-  
-  return { from: latestTag, to: 'HEAD' }
 }
 
 /**
@@ -297,7 +303,7 @@ export const hasUpstreamBranch = async () => {
 /** 获取 push 所需的 upstream 参数 */
 export const getUpstreamArgs = async (remoteName: string, branch?: string) => {
   const hasUpstream = await hasUpstreamBranch()
-  const target = branch ?? await getCurrentBranch()
+  const target = branch || await getCurrentBranch()
   
   if (!hasUpstream) {
     return [ '--set-upstream', remoteName, target! ]
@@ -373,7 +379,7 @@ export const pushTag = async (remoteName: string, tag: string, args: string[] = 
  */
 export const pushBranch = async (
   remoteName: string,
-  branch: string,
+  branch?: string,
   args: string[] = [],
 ): Promise<void> => {
   const upstreamArgs = await getUpstreamArgs(remoteName, branch)
