@@ -7,15 +7,15 @@ export const DEFAULT_TAG: string = 'latest'
 export const DEFAULT_ACCESS: string = 'public'
 export const DEFAULT_REGISTRY: string = 'https://registry.npmjs.org/'
 
-const accessArg = (access: string = DEFAULT_ACCESS) => {
+export const accessArg = (access: string = DEFAULT_ACCESS) => {
   return [ '--access', access ]
 }
 
-const registryArg = (registry: string = DEFAULT_REGISTRY) => {
+export const registryArg = (registry: string = DEFAULT_REGISTRY) => {
   return [ '--registry', registry ]
 }
 
-const tagArg = (tag: string = DEFAULT_TAG) => {
+export const tagArg = (tag: string = DEFAULT_TAG) => {
   return [ '--tag', tag ]
 }
 
@@ -69,6 +69,24 @@ export const pingRegistry = async (registry?: string): Promise<boolean> => {
  */
 export const getAuthenticatedUser = (registry?: string): Promise<string | undefined> => {
   return runNpm([ 'whoami', ...registryArg(registry) ])
+}
+
+/**
+ * 用户是否拥有写入权限
+ * @param {string} pkg
+ * @param {string} user
+ * @param {string} registry
+ * @returns {Promise<boolean>}
+ * @defaults npm access list collaborators <pkg> --json
+ * npm access ls-collaborators <pkg> --json
+ */
+export const hasWriteAccess = async (pkg: string, user: string, registry?: string): Promise<boolean> => {
+  const res = await runNpm([ 'access', 'list', 'collaborators', pkg,  '--json', ...registryArg(registry) ])
+    .catch(_=> runNpm([ 'access', 'ls-collaborators', pkg, '--json', ...registryArg(registry) ]))
+  
+  const collaborators: Record<string, string> = JSON.parse(res ?? '{}')
+  const permissions: string | undefined = collaborators[user]
+  return (permissions ?? '').includes('read-write')
 }
 
 /**

@@ -152,19 +152,37 @@ export const parseGitHubRepo = (url: string) => {
 /** 基于 EOL 的可多换行函数 */
 export const eol = (n: number = 1) => EOL.repeat(n)
 
+/** 多空格函数 */
+export const space = (n: number = 1) => ' '.repeat(n)
+
 /** `\r\n` 统一为 `\n` */
 const normalizeLineEndings = (s: string) =>
   s.trim().replace(/\r\n/g, '\n')
 
 /** 将字符串以空格分割为数组 */
 export const parseArgs = (args: string) =>
-  args.trim() ? args.trim().split(' ') : []
+  args.trim() ? args.trim().split(space()) : []
 
 /** 将数组以空格拼接为字符串 */
 export const stringifyArgs = (args: string[]) =>
-  args.length ? args.join(' ') : ''
+  args.length ? args.join(space()) : ''
 
 
 /** 去掉模板字符串首尾换行 */
 export const trimTemplate = (str: string) =>
   str.replace(/^\s*\n+|\n+\s*$/g, '')
+
+/** 生成 GitHub 仓库主页地址 */
+export const getGithubUrl = (owner: string, repo: string) => {
+  return `https://github.com/${ owner }/${ repo }`
+}
+
+/** 生成 GitHub Release 页面地址 */
+export const getGithubReleaseUrl = (owner: string, repo: string, tag: string) => {
+  return `${ getGithubUrl(owner, repo) }/releases/tag/${ encodeURIComponent(tag) }`
+}
+
+/** 生成 npm 包指定版本的详情页地址 */
+export const getPackageUrl = (pkg: string, version: string) => {
+  return `https://www.npmjs.com/package/${ pkg }/v/${ version }`
+}
