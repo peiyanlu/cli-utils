@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.6](https://github.com/peiyanlu/cli-utils/compare/0.0.5...0.0.6) (2026-01-30)
+
+### ✨ Features | 新功能
+
+* 增强 git tags 获取 ([9b7d122](https://github.com/peiyanlu/cli-utils/commit/9b7d1229609f0e42108047d9a1be95d6a70cd0c0))
+
 ## [0.0.5](https://github.com/peiyanlu/cli-utils/compare/0.0.4...0.0.5) (2026-01-30)
 
 ### ✨ Features | 新功能
