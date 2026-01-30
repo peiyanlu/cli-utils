@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.0.5](https://github.com/peiyanlu/cli-utils/compare/0.0.4...0.0.5) (2026-01-30)
+
+### ✨ Features | 新功能
+
+* 补充 git 和 npm 工具 ([0365ad3](https://github.com/peiyanlu/cli-utils/commit/0365ad3c6034a0e6cffcbe84c5f33f02adf08040))
+* 补充 npm 工具 ([d31b2d6](https://github.com/peiyanlu/cli-utils/commit/d31b2d682bb9f65aa0b3dad13d4246d6fa38f561))
+
+### 👷‍ Build System | 构建
+
+* 更新构建配置 ([06d0230](https://github.com/peiyanlu/cli-utils/commit/06d0230246a4f63e1987d32bd07eb3c379954b88))
+
 ## [0.0.4](https://github.com/peiyanlu/cli-utils/compare/0.0.3...0.0.4) (2026-01-18)
 
 ## [0.0.3](https://github.com/peiyanlu/cli-utils/compare/0.0.2...0.0.3) (2026-01-14)
