@@ -1,6 +1,8 @@
 import { join } from 'node:path'
+import { lt } from 'semver'
 import { runNpm } from './shell.js'
 import { readJsonFile } from './utils.js'
+import { parseVersion } from './version.js'
 
 
 export const DEFAULT_TAG: string = 'latest'
@@ -158,3 +160,19 @@ export const publishPackage = (options?: {
     ...args,
   ], { cwd, error: 'throw' })
 }
+
+/** 解析发布的 dist-tag */
+export const resolvePublishTag = async (pkgName: string, version: string) => {
+  const { isPrerelease, preId } = parseVersion(version)
+  
+  if (isPrerelease) return preId || 'next'
+  
+  const active = await getPublishedVersion(pkgName)
+  if (!active) return 'latest'
+  
+  return lt(version, active) ? 'previous' : 'latest'
+}
+
+/** OTP 错误 */
+export const isOtpError = (err: unknown) =>
+  err instanceof Error && /one-time password|otp/i.test(err.message)
