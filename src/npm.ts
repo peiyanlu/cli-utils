@@ -156,5 +156,5 @@ export const publishPackage = (options?: {
     ...registryArg(registry),
     '--workspaces=false',
     ...args,
-  ], { cwd })
+  ], { cwd, error: 'throw' })
 }

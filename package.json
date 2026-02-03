@@ -29,6 +29,7 @@
   "devDependencies": {
     "@release-it/conventional-changelog": "^10.0.2",
     "@types/node": "^24.10.3",
+    "@types/semver": "^7.7.1",
     "@vitest/coverage-v8": "^4.0.15",
     "release-it": "^19.0.2",
     "release-it-pnpm": "^4.6.6",
@@ -61,5 +62,8 @@
   "bugs": {
     "url": "https://github.com/peiyanlu/cli-utils/issues"
   },
-  "homepage": "https://github.com/peiyanlu/cli-utils#readme"
+  "homepage": "https://github.com/peiyanlu/cli-utils#readme",
+  "dependencies": {
+    "semver": "^7.7.3"
+  }
 }

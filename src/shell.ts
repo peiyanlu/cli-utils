@@ -6,8 +6,12 @@ import {
   SpawnAsyncWithStringOptions,
   SpawnSyncWithStringOptions,
 } from './types.js'
-import { stringifyArgs } from './utils.js'
+import { eol, stringifyArgs } from './utils.js'
 
+
+const formatErr = (caller: string, cmd: string, err: string) => {
+  return `${ red(caller) } ${ dim(cmd) }${ eol() }${ err }`
+}
 
 /** 异步执行 `spawn` 获取字符串类型的结果 */
 export const spawnAsync = (cmd: string, args: string[], options?: SpawnAsyncWithStringOptions) => {
@@ -38,7 +42,7 @@ export const spawnAsync = (cmd: string, args: string[], options?: SpawnAsyncWith
     
     child.on('close', (code) => {
       if (code !== 0) {
-        const msg = `${ red('spawnAsync') } ${ dim(fullCmd) } ${ stderr }`
+        const msg = formatErr('spawnAsync', fullCmd, stderr)
         
         if (error === 'log') {
           console.error(msg)
@@ -89,7 +93,12 @@ export const execAsync: ExecAsync = (
     
     exec(command, { ...others }, (err, stdout, stderr) => {
       if (err) {
-        const msg = `${ red('execAsync') } ${ dim(command) } ${ stderr || err.message }`
+        const detail =
+          stderr?.toString?.() ||
+          err?.message ||
+          ''
+        
+        const msg = formatErr('execAsync', command, detail)
         
         if (error === 'log') {
           console.error(msg)
@@ -126,7 +135,7 @@ export const spawnSyncWithString = (cmd: string, args: string[], options?: Spawn
       stderr?.toString?.() ||
       ''
     
-    const msg = `${ red('spawnSync') } ${ dim(fullCmd) } ${ detail }`
+    const msg = formatErr('spawnSync', fullCmd, detail)
     
     if (error === 'log') {
       console.error(msg)
@@ -183,7 +192,7 @@ export const execSyncWithString: ExecSync = (
       e?.message ||
       ''
     
-    const msg = `${ red('execSync') } ${ dim(command) } ${ stderr }`
+    const msg = formatErr('execSync', command, stderr)
     
     if (error === 'log') {
       console.error(msg)

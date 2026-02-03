@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      semver:
+        specifier: ^7.7.3
+        version: 7.7.3
     devDependencies:
       '@release-it/conventional-changelog':
         specifier: ^10.0.2
@@ -14,6 +18,9 @@ importers:
       '@types/node':
         specifier: ^24.10.3
         version: 24.10.4
+      '@types/semver':
+        specifier: ^7.7.1
+        version: 7.7.1
       '@vitest/coverage-v8':
         specifier: ^4.0.15
         version: 4.0.16(vitest@4.0.16(@types/node@24.10.4)(jiti@2.6.1)(yaml@2.8.2))
@@ -699,6 +706,9 @@ packages:
   '@types/parse-path@7.1.0':
     resolution: {integrity: sha512-EULJ8LApcVEPbrfND0cRQqutIOdiIgJ1Mgrhpy755r14xMohPTEpkV/k28SJvuOs9bHRFW8x+KeDAEPiGQPB9Q==}
     deprecated: This is a stub types definition. parse-path provides its own type definitions, so you do not need this installed.
+
+  '@types/semver@7.7.1':
+    resolution: {integrity: sha512-FmgJfu+MOcQ370SD0ev7EI8TlCAfKYU+B4m5T3yXc1CiRN94g/SZPtsCkk506aUDtlMnFZvasDwHHUcZUEaYuA==}
 
   '@vitest/coverage-v8@4.0.16':
     resolution: {integrity: sha512-2rNdjEIsPRzsdu6/9Eq0AYAzYdpP6Bx9cje9tL3FE5XzXRQF1fNU9pe/1yE8fCrS0HD+fBtt6gLPh6LI57tX7A==}
@@ -2535,6 +2545,8 @@ snapshots:
   '@types/parse-path@7.1.0':
     dependencies:
       parse-path: 7.1.0
+
+  '@types/semver@7.7.1': {}
 
   '@vitest/coverage-v8@4.0.16(vitest@4.0.16(@types/node@24.10.4)(jiti@2.6.1)(yaml@2.8.2))':
     dependencies:

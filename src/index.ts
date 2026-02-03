@@ -11,3 +11,5 @@ export * from './joinUrl.js'
 export * from './git.js'
 
 export * from './npm.js'
+
+export * from './version.js'
