@@ -1,3 +1,14 @@
+## <small>[0.0.8](https://github.com/peiyanlu/cli-utils/compare/0.0.7...0.0.8) (2026-04-03)</small>
+
+### 🔧 CI 配置
+
+* 更换 release 工具 ([def7e05](https://github.com/peiyanlu/cli-utils/commit/def7e0571ee386f3b98b16fd6a652dd1822b705d))
+
+### 🔗 依赖更新
+
+* 升级依赖 ([4af7228](https://github.com/peiyanlu/cli-utils/commit/4af722866cb4f0e7c6260a29058c078398634fda))
+* 升级依赖 ([b129574](https://github.com/peiyanlu/cli-utils/commit/b1295747e6af4c8b243b7f149b33b28712955447))
+
 # Changelog
 
 ## [0.0.7](https://github.com/peiyanlu/cli-utils/compare/0.0.6...0.0.7) (2026-02-03)
