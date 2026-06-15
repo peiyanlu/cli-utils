@@ -1,3 +1,14 @@
+## <small>[0.0.9](https://github.com/peiyanlu/cli-utils/compare/0.0.8...0.0.9) (2026-06-15)</small>
+
+### 🔨 配置
+
+* 升级 tsconfig ([d31ebb1](https://github.com/peiyanlu/cli-utils/commit/d31ebb1a764dc2560df5997c24219785c2049c60))
+
+### 🔗 依赖更新
+
+* 更新依赖项和工作区配置 ([1fe3773](https://github.com/peiyanlu/cli-utils/commit/1fe377301db72c62fe842c7b1c344781955d6c05))
+* 升级依赖 ([83c8eb7](https://github.com/peiyanlu/cli-utils/commit/83c8eb73a1a9b91617e6f57c828061c0b5ae8c6e))
+
 ## <small>[0.0.8](https://github.com/peiyanlu/cli-utils/compare/0.0.7...0.0.8) (2026-04-03)</small>
 
 ### 🔧 CI 配置
