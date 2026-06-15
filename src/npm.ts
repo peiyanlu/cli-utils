@@ -83,8 +83,8 @@ export const getAuthenticatedUser = (registry?: string): Promise<string | undefi
  * npm access ls-collaborators <pkg> --json
  */
 export const hasWriteAccess = async (pkg: string, user: string, registry?: string): Promise<boolean> => {
-  const res = await runNpm([ 'access', 'list', 'collaborators', pkg,  '--json', ...registryArg(registry) ])
-    .catch(_=> runNpm([ 'access', 'ls-collaborators', pkg, '--json', ...registryArg(registry) ]))
+  const res = await runNpm([ 'access', 'list', 'collaborators', pkg, '--json', ...registryArg(registry) ])
+    .catch(_ => runNpm([ 'access', 'ls-collaborators', pkg, '--json', ...registryArg(registry) ]))
   
   const collaborators: Record<string, string> = JSON.parse(res ?? '{}')
   const permissions: string | undefined = collaborators[user]
@@ -176,3 +176,19 @@ export const resolvePublishTag = async (pkgName: string, version: string) => {
 /** OTP 错误 */
 export const isOtpError = (err: unknown) =>
   err instanceof Error && /one-time password|otp/i.test(err.message)
+
+/** 发布是否可以成功 */
+const canPublish = async (registry?: string): Promise<boolean> => {
+  const res = await runNpm(
+    [ 'publish', '--dry-run', '--no-git-checks', '--access', 'public', ...registryArg(registry) ],
+    { error: 'throw' },
+  ).catch((err: Error) => err)
+  
+  if (!(res instanceof Error)) {
+    return true
+  }
+  
+  const matches = [ /previously published versions/i, /cannot publish over/i ]
+  
+  return matches.some(reg => reg.test(res.message))
+}

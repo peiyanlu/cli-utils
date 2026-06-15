@@ -1,3 +1,5 @@
-neverBuiltDependencies: [ ]
+allowBuilds:
+  esbuild: false
 
-#dlxCacheMaxAge = 60
+minimumReleaseAgeExclude:
+  - "@peiyanlu/*"

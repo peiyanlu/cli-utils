@@ -7,6 +7,7 @@ export default defineConfig({
   },
   git: {
     commitMessage: 'chore(release): v${tag}',
+    tagMessage: 'v${tag}',
   },
   github: {
     releaseName: 'v${tag}',

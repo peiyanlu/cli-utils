@@ -21,19 +21,22 @@
   "scripts": {
     "dev": "tsdown -w",
     "build": "tsdown",
-    "prepublish": "tsdown",
+    "prepublishOnly": "tsdown",
     "release": "release",
     "test": "vitest run",
     "test:cov": "vitest run --coverage"
   },
   "devDependencies": {
-    "@peiyanlu/release": "^0.0.8",
-    "@types/node": "^25.5.1",
+    "@peiyanlu/release": "^0.0.14",
+    "@types/node": "^24.13.2",
     "@types/semver": "^7.7.1",
-    "@vitest/coverage-v8": "^4.1.3",
-    "tsdown": "^0.21.7",
-    "typescript": "^6.0.2",
-    "vitest": "^4.1.3"
+    "@vitest/coverage-v8": "^4.1.8",
+    "tsdown": "^0.22.2",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  },
+  "dependencies": {
+    "semver": "^7.8.4"
   },
   "author": {
     "name": "YanluPei",
@@ -55,13 +58,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/peiyanlu/cli-utils.git"
+    "url": "git+https://github.com/peiyanlu/cli-utils.git"
   },
   "bugs": {
     "url": "https://github.com/peiyanlu/cli-utils/issues"
   },
-  "homepage": "https://github.com/peiyanlu/cli-utils#readme",
-  "dependencies": {
-    "semver": "^7.7.4"
-  }
+  "homepage": "https://github.com/peiyanlu/cli-utils#readme"
 }
