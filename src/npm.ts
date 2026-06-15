@@ -178,7 +178,7 @@ export const isOtpError = (err: unknown) =>
   err instanceof Error && /one-time password|otp/i.test(err.message)
 
 /** 发布是否可以成功 */
-const canPublish = async (registry?: string): Promise<boolean> => {
+export const canPublish = async (registry?: string): Promise<boolean> => {
   const res = await runNpm(
     [ 'publish', '--dry-run', '--no-git-checks', '--access', 'public', ...registryArg(registry) ],
     { error: 'throw' },

@@ -1,6 +1,6 @@
 import { exec, execSync, spawn, spawnSync } from 'node:child_process'
 import { dim, red } from './styleText.js'
-import {
+import type {
   ExecAsyncWithStringOptions,
   ExecSyncWithStringOptions,
   SpawnAsyncWithStringOptions,

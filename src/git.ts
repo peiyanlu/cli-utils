@@ -551,6 +551,7 @@ export const restoreFromCommit = async (commit: string): Promise<void> => {
   await runGit([ 'restore', `--source=${ commit }`, '.' ])
 }
 
+/** 删除本地 tag */
 export const deleteTag = async (tag: string) => {
   await runGit([ 'tag', '--delete', tag ])
 }
@@ -560,14 +561,17 @@ export const restoreAllSync = async () => {
   runGitSync([ 'restore', '.' ])
 }
 
+/** {@link deleteTag} 的同步版本 */
 export const deleteTagSync = async (tag: string) => {
   runGitSync([ 'tag', '--delete', tag ])
 }
 
+/** {@link discardAll} 的同步版本 */
 export const discardAllSync = async (): Promise<void> => {
   runGitSync([ 'reset', '--hard', 'HEAD' ])
 }
 
+/** {@link resetHard} 的同步版本 */
 export const resetHardSync = async (count: number = 1): Promise<void> => {
   runGitSync([ 'reset', '--hard', `HEAD~${ count }` ])
 }
