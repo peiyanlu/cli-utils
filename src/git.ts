@@ -557,22 +557,22 @@ export const deleteTag = async (tag: string) => {
 }
 
 /** {@link restoreAll} 的同步版本 */
-export const restoreAllSync = async () => {
+export const restoreAllSync = () => {
   runGitSync([ 'restore', '.' ])
 }
 
 /** {@link deleteTag} 的同步版本 */
-export const deleteTagSync = async (tag: string) => {
+export const deleteTagSync = (tag: string) => {
   runGitSync([ 'tag', '--delete', tag ])
 }
 
 /** {@link discardAll} 的同步版本 */
-export const discardAllSync = async (): Promise<void> => {
+export const discardAllSync = () => {
   runGitSync([ 'reset', '--hard', 'HEAD' ])
 }
 
 /** {@link resetHard} 的同步版本 */
-export const resetHardSync = async (count: number = 1): Promise<void> => {
+export const resetHardSync = (count: number = 1) => {
   runGitSync([ 'reset', '--hard', `HEAD~${ count }` ])
 }
 
