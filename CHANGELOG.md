@@ -1,3 +1,10 @@
+## <small>[0.0.11](https://github.com/peiyanlu/cli-utils/compare/0.0.10...0.0.11) (2026-06-16)</small>
+
+### 🐛 Bug 修复
+
+* 修复同步函数被错误标记为异步 ([4942297](https://github.com/peiyanlu/cli-utils/commit/494229705b5abf20f18d8ea5a7f34402facc3116))
+
+
 ## <small>[0.0.10](https://github.com/peiyanlu/cli-utils/compare/0.0.9...0.0.10) (2026-06-16)</small>
 
 ### 📝 文档
