@@ -1,3 +1,10 @@
+## <small>[0.0.10](https://github.com/peiyanlu/cli-utils/compare/0.0.9...0.0.10) (2026-06-16)</small>
+
+### 📝 文档
+
+* 补充文档 ([31d22fa](https://github.com/peiyanlu/cli-utils/commit/31d22fabd2c352069ebd72e07535d0af5ef7a552))
+
+
 ## <small>[0.0.9](https://github.com/peiyanlu/cli-utils/compare/0.0.8...0.0.9) (2026-06-15)</small>
 
 ### 🔨 配置
