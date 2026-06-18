@@ -6,10 +6,12 @@ export * from './utils.js'
 
 export * from './shell.js'
 
-export * from './joinUrl.js'
+export * from './join-url.js'
 
-export * from './git.js'
+export * from './git/index.js'
 
 export * from './npm.js'
 
 export * from './version.js'
+
+export * from './shell/index.js'

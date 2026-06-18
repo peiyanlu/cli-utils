@@ -2,8 +2,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import { copyFile, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { EOL } from 'node:os'
 import { join, resolve } from 'node:path'
-import { runNodeSync } from './shell.js'
-import { CopyOptions, PkgInfo, SpawnSyncWithStringOptions } from './types.js'
+import { CopyOptions, PkgInfo } from './types.js'
 
 
 export const isValidPackageName = (packageName: string) => {
@@ -125,14 +124,6 @@ export const pkgFromUserAgent = (userAgent: string | undefined): PkgInfo | undef
   return { name, version } satisfies PkgInfo
 }
 
-/** 同步执行 Node CLI（用于测试环境） */
-export const runCliForTest = (path: string, args: string[] = [], options?: SpawnSyncWithStringOptions) => {
-  return runNodeSync([ path, ...args ], {
-    env: { ...process.env, _VITE_TEST_CLI: 'true' },
-    ...options,
-  })
-}
-
 /** 判断测试文件（夹） */
 export const isTestFile = (name: string) => {
   return [
@@ -154,10 +145,6 @@ export const eol = (n: number = 1) => EOL.repeat(n)
 
 /** 多空格函数 */
 export const space = (n: number = 1) => ' '.repeat(n)
-
-/** `\r\n` 统一为 `\n` */
-const normalizeLineEndings = (s: string) =>
-  s.trim().replace(/\r\n/g, '\n')
 
 /** 将字符串以空格分割为数组 */
 export const parseArgs = (args: string) =>
@@ -185,4 +172,9 @@ export const getGithubReleaseUrl = (owner: string, repo: string, tag: string) =>
 /** 生成 npm 包指定版本的详情页地址 */
 export const getPackageUrl = (pkg: string, version: string) => {
   return `https://www.npmjs.com/package/${ pkg }/v/${ version }`
+}
+
+/** 字符串按换行符分割并过滤 */
+export const splitLines = (text: string) => {
+  return text.split(/\r?\n/).filter(Boolean)
 }

@@ -10,7 +10,7 @@ export function joinUrl(input: string | readonly string[]): string {
   
   /** 协议正则 */
   const PROTOCOL_RE = /^[^/:]+:\/*$/
-  const FILE_PROTOCOL_RE = /^file:\/\/\//
+  const FILE_PROTOCOL_RE = /^file:\/*/
   
   // 1️⃣ 合并纯 protocol（如 ['http:', 'example.com']）
   if (PROTOCOL_RE.test(parts[0]) && parts.length > 1) {
@@ -59,4 +59,3 @@ export function joinUrl(input: string | readonly string[]): string {
   
   return url
 }
-

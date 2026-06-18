@@ -84,10 +84,10 @@ export const getAuthenticatedUser = (registry?: string): Promise<string | undefi
  */
 export const hasWriteAccess = async (pkg: string, user: string, registry?: string): Promise<boolean> => {
   const res = await runNpm([ 'access', 'list', 'collaborators', pkg, '--json', ...registryArg(registry) ])
-    .catch(_ => runNpm([ 'access', 'ls-collaborators', pkg, '--json', ...registryArg(registry) ]))
   
   const collaborators: Record<string, string> = JSON.parse(res ?? '{}')
   const permissions: string | undefined = collaborators[user]
+  
   return (permissions ?? '').includes('read-write')
 }
 

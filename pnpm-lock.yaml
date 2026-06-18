@@ -8,13 +8,22 @@ importers:
 
   .:
     dependencies:
+      '@peiyanlu/ts-utils':
+        specifier: ^0.0.7
+        version: 0.0.7
+      ansis:
+        specifier: ^4.3.1
+        version: 4.3.1
       semver:
         specifier: ^7.8.4
         version: 7.8.4
     devDependencies:
       '@peiyanlu/release':
-        specifier: ^0.0.14
-        version: 0.0.14(conventional-commits-filter@5.0.0)
+        specifier: ^0.0.15
+        version: 0.0.15(conventional-commits-filter@5.0.0)
+      '@peiyanlu/test-tools':
+        specifier: ^0.0.2
+        version: 0.0.2
       '@types/node':
         specifier: ^24.13.2
         version: 24.13.2
@@ -375,17 +384,22 @@ packages:
   '@oxc-project/types@0.135.0':
     resolution: {integrity: sha512-wR+xRdFkUBMvcAjBJ2q2kcZM6d+DKu2NgoOyxZgYwZdLhmiv6+rnO8PZ/P68kMiZtIKm+pW7zyEJ4kSOs0vo+Q==}
 
-  '@peiyanlu/cli-utils@0.0.8':
-    resolution: {integrity: sha512-vaGXGxK70zFm14clXgjcF07poPgUUSO7eXHBNbtfgrhYppdY3zPsKXxcfrwuzYXkxN+zJPi+Cm0PouQtp2L9dw==}
+  '@peiyanlu/cli-utils@0.0.9':
+    resolution: {integrity: sha512-R06SrptGM4uKV9gnPxnamECZy4TKAK2r+8MkA5cMLcriiPMf6TkPluHio280A3ZPShAeMRpE+Old7hdEkXkkrg==}
     engines: {node: '>=20'}
 
-  '@peiyanlu/release@0.0.14':
-    resolution: {integrity: sha512-kD1pwS92g8Nut7xxc8pas8kcMrQuqIDgHlsEt4I31gHgycuIqE69z7gyMS1OTeoetn0Ole86sQmSYMxroNppww==}
+  '@peiyanlu/release@0.0.15':
+    resolution: {integrity: sha512-cIOGAWg2z48zsshsfgbh+taPl+hdV3w1myJceG0S8Y76/F3S4J0pYgDEk89BA8bL1dyVVF7VqLKyvyi4rlN/QA==}
     engines: {node: '>=20'}
     hasBin: true
 
-  '@peiyanlu/ts-utils@0.0.5':
-    resolution: {integrity: sha512-dNUUZGRXb1ggHC3NPWwNF0Sx7/W2fpFHyCvfwJDJHy/TUyK7bcZropkkAHTklE7zao/y5GEeF8mP9LkHqgVaHg==}
+  '@peiyanlu/test-tools@0.0.2':
+    resolution: {integrity: sha512-6ImrV65NjsNm1Wof3Jnqe+jTwQMHnC7+jMxVj2XaLefOcS3Mnxluaj/lLRE0PvU7ZfPjYi1O4XhJHK8J12ZFZg==}
+    engines: {node: '>=22', pnpm: '>=11'}
+
+  '@peiyanlu/ts-utils@0.0.7':
+    resolution: {integrity: sha512-+Mk3+otwr2Dl2Ux1HdtJcU8KeE7sbztU/dYUtdhbKzE1jfyHWQkx5mKTu0cj1geh5DnTYSMjFaXW17520HNh5w==}
+    engines: {node: '>=20.0.0'}
 
   '@publint/pack@0.1.4':
     resolution: {integrity: sha512-HDVTWq3H0uTXiU0eeSQntcVUTPP3GamzeXI41+x7uU9J65JgWQh3qWZHblR1i0npXfFtF+mxBiU2nJH8znxWnQ==}
@@ -1674,18 +1688,18 @@ snapshots:
 
   '@oxc-project/types@0.135.0': {}
 
-  '@peiyanlu/cli-utils@0.0.8':
+  '@peiyanlu/cli-utils@0.0.9':
     dependencies:
       semver: 7.8.4
 
-  '@peiyanlu/release@0.0.14(conventional-commits-filter@5.0.0)':
+  '@peiyanlu/release@0.0.15(conventional-commits-filter@5.0.0)':
     dependencies:
       '@actions/core': 3.0.1
       '@actions/github': 9.1.1
       '@clack/prompts': 1.5.1
       '@octokit/rest': 22.0.1
-      '@peiyanlu/cli-utils': 0.0.8
-      '@peiyanlu/ts-utils': 0.0.5
+      '@peiyanlu/cli-utils': 0.0.9
+      '@peiyanlu/ts-utils': 0.0.7
       ansis: 4.3.1
       commander: 15.0.0
       conventional-changelog: 7.2.0(conventional-commits-filter@5.0.0)
@@ -1698,7 +1712,9 @@ snapshots:
     transitivePeerDependencies:
       - conventional-commits-filter
 
-  '@peiyanlu/ts-utils@0.0.5': {}
+  '@peiyanlu/test-tools@0.0.2': {}
+
+  '@peiyanlu/ts-utils@0.0.7': {}
 
   '@publint/pack@0.1.4': {}
 

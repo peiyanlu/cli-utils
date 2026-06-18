@@ -22,11 +22,11 @@ export const parseVersion = (raw: string) => {
   if (!version) return {}
   
   const { prerelease } = parse(version)!
-  const isPrerelease = Boolean(prerelease.length)
-  const [ preId, preBase ] = prerelease.map(String)
+  
+  const isPrerelease = prerelease.length > 0
+  const [ _id, _base ] = prerelease
+  const preId = typeof _id === 'string' ? _id : undefined
+  const preBase = typeof _base === 'number' ? String(_base) : undefined
   
   return { version, isPrerelease, preId, preBase }
 }
-
-
-export { isValidVersion as isValid }
