@@ -1,9 +1,12 @@
 import { dim } from 'ansis'
 import { exec, execSync } from 'node:child_process'
 import { stringifyArgs } from '../utils.js'
-import { ExecAsync, ExecAsyncOpts, ExecSync, ExecSyncOpts, getShellOptions, handleError, ShellResult } from './share.js'
+import { handleError } from './handle.js'
+import { shell } from './options.js'
+import type { ExecAsync, ExecAsyncOpts, ExecSync, ExecSyncOpts, ShellResult } from './types.js'
 
 
+/** 异步执行 `exec` 获取字符串类型的结果 */
 export const execAsync: ExecAsync = <TFallback = undefined>(
   cmd: string,
   argsOrOptions?: string[] | ExecAsyncOpts<TFallback>,
@@ -21,23 +24,23 @@ export const execAsync: ExecAsync = <TFallback = undefined>(
       options = argsOrOptions
     }
     
-    const { trimEnd, dryRun, error, fallback, ...others } = options ?? {}
+    const resolved = shell.resolve<ExecAsyncOpts<TFallback>>(options ?? {})
+    const { trimEnd, dryRun, error, fallback, ...others } = resolved
     
     if (dryRun) {
       console.log(`${ dim('[dry-run]') } ${ command }`)
       return resolve(fallback as ShellResult<TFallback>)
     }
     
-    const shellOptions = getShellOptions()
     exec(
       command,
-      { ...shellOptions, ...others, encoding: 'utf-8' },
+      { ...shell.resolve(others), encoding: 'utf-8' },
       (err, stdout, stderr) => {
         if (err) {
           const detail = stderr.toString() || err.message
           
           try {
-            const res = handleError('execAsync', command, fallback, error, detail)
+            const res = handleError(command, fallback, error, detail)
             resolve(res as ShellResult<TFallback>)
           } catch (e) {
             reject(e)
@@ -51,6 +54,7 @@ export const execAsync: ExecAsync = <TFallback = undefined>(
 }
 
 
+/** 执行 `execSync` 获取字符串类型的结果 */
 export const execSyncWithString: ExecSync = <TFallback = undefined>(
   cmd: string,
   argsOrOptions?: string[] | ExecSyncOpts<TFallback>,
@@ -67,7 +71,8 @@ export const execSyncWithString: ExecSync = <TFallback = undefined>(
     options = argsOrOptions
   }
   
-  const { trimEnd, dryRun, error, fallback, ...others } = options ?? {}
+  const resolved = shell.resolve<ExecSyncOpts<TFallback>>(options ?? {})
+  const { trimEnd, dryRun, error, fallback, ...others } = resolved
   
   if (dryRun) {
     console.log(`${ dim('[dry-run]') } ${ command }`)
@@ -75,14 +80,13 @@ export const execSyncWithString: ExecSync = <TFallback = undefined>(
   }
   
   try {
-    const shellOptions = getShellOptions()
-    const stdout = execSync(command, { ...shellOptions, ...others, encoding: 'utf-8' })
+    const stdout = execSync(command, { ...others, encoding: 'utf-8' })
     
     return trimEnd ? stdout.trimEnd() : stdout
   } catch (e: any) {
     const detail = e?.stderr?.toString?.() || e?.message
     
-    const res = handleError('execSyncWithString', command, fallback, error, detail)
+    const res = handleError(command, fallback, error, detail)
     return res as ShellResult<TFallback>
   }
 }

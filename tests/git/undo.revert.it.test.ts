@@ -1,6 +1,6 @@
 import { createTempDir, GitTool, SetupManager } from '@peiyanlu/test-tools'
 import { afterAll, describe, expect, it } from 'vitest'
-import { gitRevertCommit, setShellOptions } from '../../src/index.js'
+import { gitRevertCommit, shell } from '../../src/index.js'
 
 
 const TEMP_DIR = createTempDir()
@@ -8,7 +8,7 @@ let testTools: GitTool
 const manager = new SetupManager()
 
 
-setShellOptions({
+shell.configure({
   cwd: TEMP_DIR,
 })
 

@@ -2,7 +2,7 @@ import { createTempDir, GitTool, SetupManager } from '@peiyanlu/test-tools'
 import { rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
-import { gitPush, gitPushBranch, gitPushDeleteRef, gitPushTag, gitTag, setShellOptions } from '../../src/index.js'
+import { gitPush, gitPushBranch, gitPushDeleteRef, gitPushTag, gitTag, shell } from '../../src/index.js'
 
 
 const TEMP_DIR = createTempDir()
@@ -11,7 +11,7 @@ const manager = new SetupManager()
 
 const remoteDir = join(TEMP_DIR, '..', 'test-push-remote.git')
 
-setShellOptions({
+shell.configure({
   cwd: TEMP_DIR,
 })
 

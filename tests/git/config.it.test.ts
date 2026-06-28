@@ -8,7 +8,7 @@ import {
   gitConfigSet,
   gitConfigSync,
   gitConfigUnset,
-  setShellOptions,
+  shell,
 } from '../../src/index.js'
 
 
@@ -20,7 +20,7 @@ const env = {
   GIT_CONFIG_GLOBAL: join(TEMP_DIR, `.gitconfig`),
 }
 
-setShellOptions({
+shell.configure({
   cwd: TEMP_DIR,
   env: {
     ...process.env,

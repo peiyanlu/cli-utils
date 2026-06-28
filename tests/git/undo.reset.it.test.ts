@@ -10,7 +10,7 @@ import {
   gitResetSoft,
   gitResetSoftSync,
   headArg,
-  setShellOptions,
+  shell,
 } from '../../src/index.js'
 
 
@@ -19,7 +19,7 @@ let tool: GitTool
 const manager = new SetupManager()
 
 
-setShellOptions({
+shell.configure({
   cwd: TEMP_DIR,
 })
 

@@ -13,7 +13,7 @@ import {
   gitRemoteRename,
   gitRemoteSetUrl,
   gitRemoteSync,
-  setShellOptions,
+  shell,
 } from '../../src/index.js'
 
 
@@ -24,7 +24,7 @@ const manager = new SetupManager()
 const remoteDir1 = join(TEMP_DIR, '..', 'test-remote-origin.git')
 const remoteDir2 = join(TEMP_DIR, '..', 'test-remote-upstream.git')
 
-setShellOptions({
+shell.configure({
   cwd: TEMP_DIR,
 })
 

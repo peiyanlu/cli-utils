@@ -1,7 +1,9 @@
 import { dim } from 'ansis'
 import { spawn, spawnSync } from 'node:child_process'
 import { stringifyArgs } from '../utils.js'
-import { getShellOptions, handleError, ShellResult, SpawnAsyncOpts, SpawnSyncOpts } from './share.js'
+import { handleError } from './handle.js'
+import { shell } from './options.js'
+import type { ShellResult, SpawnAsyncOpts, SpawnSyncOpts } from './types.js'
 
 
 /** 异步执行 `spawn` 获取字符串类型的结果 */
@@ -11,7 +13,8 @@ export const spawnAsync = <TFallback = undefined>(
   options?: SpawnAsyncOpts<TFallback>,
 ) => {
   return new Promise<ShellResult<TFallback>>((resolve, reject) => {
-    const { trimEnd, error, dryRun, fallback, ...others } = options ?? {}
+    const resolved = shell.resolve<SpawnAsyncOpts<TFallback>>(options ?? {})
+    const { trimEnd, error, dryRun, fallback, ...others } = resolved
     const fullCmd = stringifyArgs([ cmd, ...args ])
     
     if (dryRun) {
@@ -19,8 +22,7 @@ export const spawnAsync = <TFallback = undefined>(
       return resolve(fallback as ShellResult<TFallback>)
     }
     
-    const shellOptions = getShellOptions()
-    const child = spawn(cmd, args, { ...shellOptions, ...others })
+    const child = spawn(cmd, args, { ...others })
     
     let stdout = ''
     child.stdout?.setEncoding('utf-8')
@@ -37,7 +39,7 @@ export const spawnAsync = <TFallback = undefined>(
     
     const handler = (err: string) => {
       try {
-        const res = handleError<TFallback>('SA', fullCmd, fallback, error, err)
+        const res = handleError<TFallback>(fullCmd, fallback, error, err)
         resolve(res as ShellResult<TFallback>)
       } catch (e) {
         reject(e)
@@ -63,7 +65,8 @@ export const spawnSyncWithString = <TFallback = undefined>(
   args: string[],
   options?: SpawnSyncOpts<TFallback>,
 ) => {
-  const { trimEnd, error, dryRun, fallback, ...others } = options ?? {}
+  const resolved = shell.resolve<SpawnSyncOpts<TFallback>>(options ?? {})
+  const { trimEnd, error, dryRun, fallback, ...others } = resolved
   const fullCmd = stringifyArgs([ cmd, ...args ])
   
   if (dryRun) {
@@ -71,20 +74,15 @@ export const spawnSyncWithString = <TFallback = undefined>(
     return fallback as ShellResult<TFallback>
   }
   
-  const shellOptions = getShellOptions()
   const { stdout, stderr, status, error: sysErr } = spawnSync(
     cmd,
     args,
-    {
-      ...shellOptions,
-      ...others,
-      encoding: 'utf-8',
-    },
+    { ...others, encoding: 'utf-8' },
   )
   
   if (status !== 0) {
     const detail = sysErr?.message || stderr?.toString()
-    const res = handleError<TFallback>('SSWS', fullCmd, fallback, error, detail)
+    const res = handleError<TFallback>(fullCmd, fallback, error, detail)
     
     return res as ShellResult<TFallback>
   }

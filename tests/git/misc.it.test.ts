@@ -21,7 +21,7 @@ import {
   isRemoteName,
   isWorkingTreeClean,
   resolveChangelogRange,
-  setShellOptions,
+  shell,
 } from '../../src/index.js'
 
 
@@ -32,7 +32,7 @@ const remoteDir = join(TEMP_DIR, '..', 'test-misc-remote.git')
 const CLONE_DIR = createTempDir()
 
 
-setShellOptions({
+shell.configure({
   cwd: TEMP_DIR,
 })
 
@@ -172,7 +172,7 @@ describe('git misc integration', () => {
       await manager.prepare(5)
       
       tool.cwd = CLONE_DIR
-      setShellOptions({
+      shell.configure({
         cwd: CLONE_DIR,
       })
       
@@ -188,7 +188,7 @@ describe('git misc integration', () => {
       expect(tool.exec('git show-ref --verify refs/remotes/origin/master')).toBeDefined()
       
       tool.cwd = TEMP_DIR
-      setShellOptions({
+      shell.configure({
         cwd: TEMP_DIR,
       })
       rmSync(CLONE_DIR, { recursive: true })

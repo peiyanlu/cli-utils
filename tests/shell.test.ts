@@ -11,7 +11,7 @@ import {
   runNodeSync,
   runNpm,
   runNpmSync,
-  setShellOptions,
+  shell,
   spawnAsync,
   spawnSyncWithString,
   splitLines,
@@ -23,10 +23,9 @@ const nodePrint = (code: string) => [ '-e', code ]
 
 
 afterEach(() => {
-  setShellOptions({
+  shell.configure({
     cwd: undefined,
     env: undefined,
-    timeout: undefined,
   })
   vi.restoreAllMocks()
 })
@@ -52,7 +51,7 @@ describe('spawnAsync', () => {
     await expect(spawnAsync('node', nodePrint('process.exit(1)'), {
       error: 'throw',
       trimEnd: true,
-    })).rejects.toThrow(/SA.*node -e/s)
+    })).rejects.toThrow(/.*node -e/s)
   })
   
   it('logs error and returns fallback when error is log', async () => {
@@ -64,7 +63,7 @@ describe('spawnAsync', () => {
       trimEnd: true,
     })).resolves.toBe('fallback')
     
-    expect(spy).toHaveBeenCalledWith(expect.stringMatching(/SA.*node -e/s))
+    expect(spy).toHaveBeenCalledWith(expect.stringMatching(/.*node -e/s))
   })
   
   it('supports dryRun without executing command', async () => {
@@ -80,6 +79,10 @@ describe('spawnAsync', () => {
   
   it('supports child.on.error', async () => {
     expect(await spawnAsync('node-err', [], {})).toBe(undefined)
+  })
+  
+  it('supports stderr', async () => {
+    expect(await spawnAsync('node', [ '-vv' ], {})).toBe(undefined)
   })
 })
 
@@ -107,7 +110,7 @@ describe('execAsync', () => {
   it('throws when command fails and error is throw', async () => {
     await expect(execAsync('node -e "process.exit(1)"', {
       error: 'throw',
-    })).rejects.toThrow(/execAsync.*node -e/s)
+    })).rejects.toThrow(/.*node -e/s)
   })
   
   it('supports dryRun without executing command', async () => {
@@ -139,7 +142,7 @@ describe('spawnSyncWithString', () => {
     expect(() => spawnSyncWithString('node', nodePrint('process.exit(1)'), {
       error: 'throw',
       trimEnd: true,
-    })).toThrow(/SSWS.*node -e/s)
+    })).toThrow(/.*node -e/s)
   })
   
   it('supports dryRun without executing command', () => {
@@ -176,7 +179,7 @@ describe('execSyncWithString', () => {
   it('throws when command fails and error is throw', () => {
     expect(() => execSyncWithString('node -e "process.exit(1)"', {
       error: 'throw',
-    })).toThrow(/execSyncWithString.*node -e/s)
+    })).toThrow(/.*node -e/s)
   })
   
   it('supports dryRun without executing command', () => {
@@ -198,7 +201,7 @@ describe('shell options and wrappers', () => {
     await mkdir(first, { recursive: true })
     await mkdir(second, { recursive: true })
     
-    setShellOptions({ cwd: first })
+    shell.configure({ cwd: first })
     
     expect(await spawnAsync('node', nodePrint('console.log(process.cwd())'), { trimEnd: true })).toBe(first)
     expect(await spawnAsync('node', nodePrint('console.log(process.cwd())'), {
@@ -208,15 +211,15 @@ describe('shell options and wrappers', () => {
   })
   
   it('applies global env and allows per-call env override', async () => {
-    setShellOptions({
+    shell.configure({
       env: {
         ...process.env,
         SHELL_TEST_VALUE: 'global',
       },
     })
     
-    expect(await spawnAsync('node', nodePrint('console.log(process.env.SHELL_TEST_VALUE)'), { trimEnd: true })).toBe(
-      'global')
+    expect(await spawnAsync('node', nodePrint('console.log(process.env.SHELL_TEST_VALUE)'), { trimEnd: true }))
+      .toBe('global')
     expect(await spawnAsync('node', nodePrint('console.log(process.env.SHELL_TEST_VALUE)'), {
       env: {
         ...process.env,
@@ -224,6 +227,35 @@ describe('shell options and wrappers', () => {
       },
       trimEnd: true,
     })).toBe('local')
+  })
+  
+  it('should apply scoped options to spawnAsync', async () => {
+    const res = await shell.run({
+      env: {
+        ...process.env,
+        SHELL_TEST_VALUE: 'local',
+      },
+      trimEnd: true,
+    }, () => {
+      return spawnAsync('node', nodePrint('console.log(process.env.SHELL_TEST_VALUE)'))
+    })
+    expect(res).toBe('local')
+    
+    const nested = await shell.run({
+      env: {
+        ...process.env,
+        SHELL_TEST_VALUE: 'local',
+      },
+      error: 'throw',
+    }, () => {
+      return shell.run({
+        trimEnd: true,
+        error: 'throw',
+      }, () => {
+        return spawnAsync('node', nodePrint('console.log(process.env.SHELL_TEST_VALUE)'))
+      })
+    })
+    expect(nested).toBe('local')
   })
   
   it('runNode and runNodeSync delegate to node execution', async () => {

@@ -14,7 +14,7 @@ import {
   gitTagDeleteSync,
   gitTagLightweight,
   gitTagSync,
-  setShellOptions,
+  shell,
 } from '../../src/index.js'
 
 
@@ -24,7 +24,7 @@ const manager = new SetupManager()
 
 const remoteDir = join(TEMP_DIR, '..', 'test-tag-remote.git')
 
-setShellOptions({
+shell.configure({
   cwd: TEMP_DIR,
 })
 
