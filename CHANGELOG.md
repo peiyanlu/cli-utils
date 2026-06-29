@@ -1,3 +1,13 @@
+## <small>[0.0.12](https://github.com/peiyanlu/cli-utils/compare/0.0.11...0.0.12) (2026-06-29)</small>
+
+### ♻️ 代码重构
+
+* 重构 shell 模块 ([4673347](https://github.com/peiyanlu/cli-utils/commit/46733472ee3a9222176b3233dbfcdac3399e3574))
+
+### 🧪 测试
+
+* 完善测试用例 ([0d444a6](https://github.com/peiyanlu/cli-utils/commit/0d444a6c63764865504b1d78c4b4a51b13cb69ad))
+
 ## <small>[0.0.11](https://github.com/peiyanlu/cli-utils/compare/0.0.10...0.0.11) (2026-06-16)</small>
 
 ### 🐛 Bug 修复
