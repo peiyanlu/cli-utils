@@ -1,7 +1,7 @@
 import { join } from 'node:path'
 import { lt } from 'semver'
+import { readJsonFile } from './file-dir.js'
 import { runNpm } from './shell.js'
-import { readJsonFile } from './utils.js'
 import { parseVersion } from './version.js'
 
 
@@ -191,4 +191,9 @@ export const canPublish = async (registry?: string): Promise<boolean> => {
   const matches = [ /previously published versions/i, /cannot publish over/i ]
   
   return matches.some(reg => reg.test(res.message))
+}
+
+/** 生成 npm 包指定版本的详情页地址 */
+export const getPackageUrl = (pkg: string, version: string) => {
+  return `https://www.npmjs.com/package/${ pkg }/v/${ version }`
 }

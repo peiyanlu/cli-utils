@@ -2,19 +2,25 @@ import { splitLines } from '../utils.js'
 import { gitForEachRef, gitLsRemote, gitTag, gitTagSync } from './raw.js'
 
 
-/** 创建 lightweight tag */
+/**
+ * 创建 lightweight tag
+ * @defaults `git tag <tag> <args>`
+ */
 export const gitTagLightweight = async (tag: string, args: string[] = []) => {
   await gitTag([ tag, ...args ])
 }
 
-/** 创建 annotated tag */
+/**
+ * 创建 annotated
+ * @defaults `git tag -annotate -message <msg> <tag> <args>`
+ */
 export const gitTagAnnotated = async (tag: string, message: string = tag, args: string[] = []) => {
   await gitTag([ '--annotate', '--message', message, tag, ...args ])
 }
 
 /**
  * 删除本地 tag
- * @defaults `git tag --delete <tag>`
+ * @defaults `git tag --delete <tag> <args>`
  */
 export const gitTagDelete = async (tag: string, args: string[] = []) => {
   await gitTag([ '--delete', tag, ...args ])

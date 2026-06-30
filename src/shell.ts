@@ -37,3 +37,7 @@ export const runNodeSync = (args: string[], options?: SpawnSyncOpts) => {
 export const checkVersion = async (cmd: string) => {
   return execAsync(cmd, [ '--version' ], { trimEnd: true })
 }
+
+export const checkVersionSync = async (cmd: string) => {
+  return execSyncWithString(cmd, [ '--version' ], { trimEnd: true })
+}

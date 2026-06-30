@@ -1,14 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { readJsonFile } from '../src/file-dir.js'
 import * as npm from '../src/npm.js'
+import { getPackageUrl } from '../src/npm.js'
 import { runNpm } from '../src/shell.js'
-import { readJsonFile } from '../src/utils.js'
 
 
 vi.mock('../src/shell.js', () => ({
   runNpm: vi.fn(),
 }))
 
-vi.mock('../src/utils.js', () => ({
+vi.mock('../src/file-dir.js', () => ({
   readJsonFile: vi.fn(),
 }))
 
@@ -443,5 +444,11 @@ describe('canPublish', () => {
     
     expect(await npm.canPublish())
       .toBe(false)
+  })
+})
+
+describe('getPackageUrl', () => {
+  it('should builds npm package version url', () => {
+    expect(getPackageUrl('@scope/pkg', '1.0.0')).toBe('https://www.npmjs.com/package/@scope/pkg/v/1.0.0')
   })
 })

@@ -5,6 +5,7 @@ import { join } from 'node:path'
 import { afterAll, afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import {
   checkVersion,
+  checkVersionSync,
   execAsync,
   execSyncWithString,
   runNode,
@@ -292,6 +293,10 @@ describe('shell options and wrappers', () => {
   
   it('checkVersion runs --version command', async () => {
     await expect(checkVersion('node')).resolves.toMatch(/^v\d+\.\d+\.\d+/)
+  })
+  
+  it('checkVersionSync runs --version command', () => {
+    expect(checkVersionSync('node')).resolves.toMatch(/^v\d+\.\d+\.\d+/)
   })
   
   it('captures multi-line output consistently', async () => {

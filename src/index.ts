@@ -15,3 +15,9 @@ export * from './npm.js'
 export * from './version.js'
 
 export * from './shell/index.js'
+
+export * from './package.js'
+
+export * from './file-dir.js'
+
+export * from './github.js'
