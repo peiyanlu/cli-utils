@@ -55,7 +55,7 @@ export const execAsync: ExecAsync = <TFallback = undefined>(
 
 
 /** 执行 `execSync` 获取字符串类型的结果 */
-export const execSyncWithString: ExecSync = <TFallback = undefined>(
+export const execSyncRe: ExecSync = <TFallback = undefined>(
   cmd: string,
   argsOrOptions?: string[] | ExecSyncOpts<TFallback>,
   maybeOptions?: ExecSyncOpts<TFallback>,
@@ -90,3 +90,5 @@ export const execSyncWithString: ExecSync = <TFallback = undefined>(
     return res as ShellResult<TFallback>
   }
 }
+
+export { execSyncRe as execSyncWithString }

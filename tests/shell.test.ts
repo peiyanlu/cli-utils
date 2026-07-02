@@ -7,14 +7,14 @@ import {
   checkVersion,
   checkVersionSync,
   execAsync,
-  execSyncWithString,
+  execSyncRe,
   runNode,
   runNodeSync,
   runNpm,
   runNpmSync,
   shell,
   spawnAsync,
-  spawnSyncWithString,
+  spawnSyncRe,
   splitLines,
 } from '../src/index.js'
 
@@ -126,21 +126,21 @@ describe('execAsync', () => {
   })
 })
 
-describe('spawnSyncWithString', () => {
+describe('spawnSyncRe', () => {
   it('returns stdout and respects trimEnd', () => {
-    expect(spawnSyncWithString('node', nodePrint('console.log("hello")'), { trimEnd: true })).toBe('hello')
+    expect(spawnSyncRe('node', nodePrint('console.log("hello")'), { trimEnd: true })).toBe('hello')
   })
   
   it('returns stdout and respects not trimEnd', () => {
-    expect(spawnSyncWithString('node', nodePrint('console.log("hello")'))).toBe('hello\n')
+    expect(spawnSyncRe('node', nodePrint('console.log("hello")'))).toBe('hello\n')
   })
   
   it('returns fallback on non-zero exit by default', () => {
-    expect(spawnSyncWithString('node', nodePrint('process.exit(1)'), { fallback: 'fallback' })).toBe('fallback')
+    expect(spawnSyncRe('node', nodePrint('process.exit(1)'), { fallback: 'fallback' })).toBe('fallback')
   })
   
   it('throws formatted error when error is throw', () => {
-    expect(() => spawnSyncWithString('node', nodePrint('process.exit(1)'), {
+    expect(() => spawnSyncRe('node', nodePrint('process.exit(1)'), {
       error: 'throw',
       trimEnd: true,
     })).toThrow(/.*node -e/s)
@@ -149,7 +149,7 @@ describe('spawnSyncWithString', () => {
   it('supports dryRun without executing command', () => {
     const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
     
-    expect(spawnSyncWithString('node', nodePrint('process.exit(1)'), {
+    expect(spawnSyncRe('node', nodePrint('process.exit(1)'), {
       dryRun: true,
       fallback: 'dry',
     })).toBe('dry')
@@ -158,27 +158,27 @@ describe('spawnSyncWithString', () => {
   })
 })
 
-describe('execSyncWithString', () => {
+describe('execSyncRe', () => {
   it('infers return type from fallback', () => {
-    expectTypeOf(execSyncWithString('node -v')).toEqualTypeOf<string | undefined>()
-    expectTypeOf(execSyncWithString('node -v', { fallback: false })).toEqualTypeOf<string | boolean>()
-    expectTypeOf(execSyncWithString('node', [ '-v' ], { fallback: 0 })).toEqualTypeOf<string | number>()
+    expectTypeOf(execSyncRe('node -v')).toEqualTypeOf<string | undefined>()
+    expectTypeOf(execSyncRe('node -v', { fallback: false })).toEqualTypeOf<string | boolean>()
+    expectTypeOf(execSyncRe('node', [ '-v' ], { fallback: 0 })).toEqualTypeOf<string | number>()
   })
   
   it('executes command string', () => {
-    expect(execSyncWithString(`node -e "console.log('123')"`, { trimEnd: true })).toBe('123')
+    expect(execSyncRe(`node -e "console.log('123')"`, { trimEnd: true })).toBe('123')
   })
   
   it('executes command with args overload', () => {
-    expect(execSyncWithString('node', [ '-e', `"console.log('456')"` ], { trimEnd: true })).toBe('456')
+    expect(execSyncRe('node', [ '-e', `"console.log('456')"` ], { trimEnd: true })).toBe('456')
   })
   
   it('returns fallback on command failure', () => {
-    expect(execSyncWithString('node -e "process.exit(1)"', { fallback: 'fallback' })).toBe('fallback')
+    expect(execSyncRe('node -e "process.exit(1)"', { fallback: 'fallback' })).toBe('fallback')
   })
   
   it('throws when command fails and error is throw', () => {
-    expect(() => execSyncWithString('node -e "process.exit(1)"', {
+    expect(() => execSyncRe('node -e "process.exit(1)"', {
       error: 'throw',
     })).toThrow(/.*node -e/s)
   })
@@ -186,7 +186,7 @@ describe('execSyncWithString', () => {
   it('supports dryRun without executing command', () => {
     const spy = vi.spyOn(console, 'log').mockImplementation(() => {})
     
-    expect(execSyncWithString('node -e "process.exit(1)"', {
+    expect(execSyncRe('node -e "process.exit(1)"', {
       dryRun: true,
       fallback: 'dry',
     })).toBe('dry')
@@ -296,7 +296,7 @@ describe('shell options and wrappers', () => {
   })
   
   it('checkVersionSync runs --version command', () => {
-    expect(checkVersionSync('node')).resolves.toMatch(/^v\d+\.\d+\.\d+/)
+    expect(checkVersionSync('node')).toMatch(/^v\d+\.\d+\.\d+/)
   })
   
   it('captures multi-line output consistently', async () => {

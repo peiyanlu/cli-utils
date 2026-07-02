@@ -60,7 +60,7 @@ export const spawnAsync = <TFallback = undefined>(
 
 
 /** 执行 `spawnSync` 获取字符串类型的结果 */
-export const spawnSyncWithString = <TFallback = undefined>(
+export const spawnSyncRe = <TFallback = undefined>(
   cmd: string,
   args: string[],
   options?: SpawnSyncOpts<TFallback>,
@@ -89,3 +89,5 @@ export const spawnSyncWithString = <TFallback = undefined>(
   
   return trimEnd ? stdout.trimEnd() : stdout
 }
+
+export { spawnSyncRe as spawnSyncWithString }
