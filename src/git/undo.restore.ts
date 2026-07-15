@@ -7,7 +7,7 @@ import { gitRestore } from './raw.js'
  * - 不影响暂存区（Index）
  * @defaults `git restore --worktree <file>`
  */
-export const gitRestoreFile = async (file: string) => {
+export const gitRestoreFile = async (file: string): Promise<void> => {
   // await gitCheckout([ '--', file ])
   await gitRestore([ '--worktree', file ])
 }
@@ -18,7 +18,7 @@ export const gitRestoreFile = async (file: string) => {
  * - 不影响暂存区（Index）
  * @defaults `git --worktree restore .`
  */
-export const gitRestoreAll = async () => {
+export const gitRestoreAll = async (): Promise<void> => {
   // await gitCheckout([ '--', '.' ])
   await gitRestore([ '--worktree', '.' ])
 }
@@ -31,7 +31,7 @@ export const gitRestoreAll = async () => {
  * @defaults `git restore --worktree --source <source> <file>`
  * @see source = `git rev-parse <expr>`
  */
-export const gitRestoreWorktreeFileFrom = async (source: string, file: string) => {
+export const gitRestoreWorktreeFileFrom = async (source: string, file: string): Promise<void> => {
   await gitRestore([ '--worktree', '--source', source, file ])
 }
 
@@ -43,7 +43,7 @@ export const gitRestoreWorktreeFileFrom = async (source: string, file: string) =
  * @defaults `git restore --worktree --source <source> .`
  * @see source = `git rev-parse <expr>`
  */
-export const gitRestoreWorktreeAllFrom = async (source: string) => {
+export const gitRestoreWorktreeAllFrom = async (source: string): Promise<void> => {
   await gitRestore([ '--worktree', '--source', source, '.' ])
 }
 
@@ -55,7 +55,7 @@ export const gitRestoreWorktreeAllFrom = async (source: string) => {
  * @defaults `git restore --staged --source <source> <file>`
  * @see source = `git rev-parse <expr>`
  */
-export const gitRestoreIndexFileFrom = async (source: string, file: string) => {
+export const gitRestoreIndexFileFrom = async (source: string, file: string): Promise<void> => {
   await gitRestore([ `--staged`, '--source', source, file ])
 }
 
@@ -67,7 +67,7 @@ export const gitRestoreIndexFileFrom = async (source: string, file: string) => {
  * @defaults `git restore --staged --source <source> .`
  * @see source = `git rev-parse <expr>`
  */
-export const gitRestoreIndexAllFrom = async (source: string) => {
+export const gitRestoreIndexAllFrom = async (source: string): Promise<void> => {
   await gitRestore([ `--staged`, '--source', source, '.' ])
 }
 
@@ -79,7 +79,7 @@ export const gitRestoreIndexAllFrom = async (source: string) => {
  * @defaults `git restore --staged --worktree --source <source> <file>`
  * @see source = `git rev-parse <expr>`
  */
-export const gitRestoreFileFrom = async (source: string, file: string) => {
+export const gitRestoreFileFrom = async (source: string, file: string): Promise<void> => {
   // await gitCheckout([ source, '--', file ])
   await gitRestore([ '--staged', '--worktree', '--source', source, file ])
 }
@@ -92,7 +92,7 @@ export const gitRestoreFileFrom = async (source: string, file: string) => {
  * @defaults `git restore --staged --worktree --source <source> .`
  * @see source = `git rev-parse <expr>`
  */
-export const gitRestoreAllFrom = async (source: string) => {
+export const gitRestoreAllFrom = async (source: string): Promise<void> => {
   // await gitCheckout([ source, '--', '.' ])
   await gitRestore([ '--staged', '--worktree', '--source', source, '.' ])
 }

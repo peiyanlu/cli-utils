@@ -8,7 +8,7 @@ import { gitRestore } from './raw.js'
  * - 等价于撤销 git add
  * @defaults `git restore --staged <file>`
  */
-export const gitUnstageFile = async (file: string) => {
+export const gitUnstageFile = async (file: string): Promise<void> => {
   await gitRestore([ '--staged', file ])
 }
 
@@ -19,7 +19,6 @@ export const gitUnstageFile = async (file: string) => {
  * - 等价于撤销所有 git add
  * @defaults `git restore --staged .`
  */
-export const gitUnstageAll = async () => {
+export const gitUnstageAll = async (): Promise<void> => {
   await gitRestore([ '--staged', '.' ])
 }
-

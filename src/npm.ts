@@ -9,15 +9,15 @@ export const DEFAULT_TAG: string = 'latest'
 export const DEFAULT_ACCESS: string = 'public'
 export const DEFAULT_REGISTRY: string = 'https://registry.npmjs.org/'
 
-export const accessArg = (access: string = DEFAULT_ACCESS) => {
+export const accessArg = (access: string = DEFAULT_ACCESS): string[] => {
   return [ '--access', access ]
 }
 
-export const registryArg = (registry: string = DEFAULT_REGISTRY) => {
+export const registryArg = (registry: string = DEFAULT_REGISTRY): string[] => {
   return [ '--registry', registry ]
 }
 
-export const tagArg = (tag: string = DEFAULT_TAG) => {
+export const tagArg = (tag: string = DEFAULT_TAG): string[] => {
   return [ '--tag', tag ]
 }
 
@@ -162,7 +162,7 @@ export const publishPackage = (options?: {
 }
 
 /** 解析发布的 dist-tag */
-export const resolvePublishTag = async (pkgName: string, version: string) => {
+export const resolvePublishTag = async (pkgName: string, version: string): Promise<string> => {
   const { isPrerelease, preId } = parseVersion(version)
   
   if (isPrerelease) return preId || 'next'
@@ -174,7 +174,7 @@ export const resolvePublishTag = async (pkgName: string, version: string) => {
 }
 
 /** OTP 错误 */
-export const isOtpError = (err: unknown) =>
+export const isOtpError = (err: unknown): boolean =>
   err instanceof Error && /one-time password|otp/i.test(err.message)
 
 /** 发布是否可以成功 */
@@ -194,6 +194,6 @@ export const canPublish = async (registry?: string): Promise<boolean> => {
 }
 
 /** 生成 npm 包指定版本的详情页地址 */
-export const getPackageUrl = (pkg: string, version: string) => {
+export const getPackageUrl = (pkg: string, version: string): string => {
   return `https://www.npmjs.com/package/${ pkg }/v/${ version }`
 }

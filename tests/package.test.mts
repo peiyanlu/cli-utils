@@ -74,9 +74,9 @@ describe('package info utils', () => {
   })
   
   it('pkgFromUserAgent parses package manager name and version', () => {
-    expect(pkgFromUserAgent('pnpm/10.0.0 npm/? node/v24')).toEqual({
+    expect(pkgFromUserAgent('pnpm/11.10.0 npm/? node/v24.15.0 win32 x64')).toEqual({
       name: 'pnpm',
-      version: '10.0.0',
+      version: '11.10.0',
     })
   })
   

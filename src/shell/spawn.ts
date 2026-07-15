@@ -11,7 +11,7 @@ export const spawnAsync = <TFallback = undefined>(
   cmd: string,
   args: string[],
   options?: SpawnAsyncOpts<TFallback>,
-) => {
+): Promise<ShellResult<TFallback>> => {
   return new Promise<ShellResult<TFallback>>((resolve, reject) => {
     const resolved = shell.resolve<SpawnAsyncOpts<TFallback>>(options ?? {})
     const { trimEnd, error, dryRun, fallback, ...others } = resolved
@@ -64,7 +64,7 @@ export const spawnSyncRe = <TFallback = undefined>(
   cmd: string,
   args: string[],
   options?: SpawnSyncOpts<TFallback>,
-) => {
+): ShellResult<TFallback> => {
   const resolved = shell.resolve<SpawnSyncOpts<TFallback>>(options ?? {})
   const { trimEnd, error, dryRun, fallback, ...others } = resolved
   const fullCmd = stringifyArgs([ cmd, ...args ])

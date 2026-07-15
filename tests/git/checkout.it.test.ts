@@ -148,10 +148,11 @@ describe('git checkout integration', () => {
   it('gitCheckoutBranchOrphan should create an orphan branch', async () => {
     await manager.prepare(1)
     
-    await gitCheckoutBranchOrphan('branch-orphan')
+    const branch = 'branch-orphan'
+    await gitCheckoutBranchOrphan(branch)
     
-    expect(await gitBranchCurrent()).toBe('branch-orphan')
-    expect(() => {tool.exec('git rev-parse branch-orphan')}).toThrow()
+    expect(await gitBranchCurrent()).toBe(branch)
+    expect(() => tool.exec(`git rev-parse ${ branch }`)).toThrow()
     
     const status = tool.exec('git status --short')
     expect(status).not.toBe('')
@@ -171,7 +172,7 @@ describe('git checkout integration', () => {
     await gitCheckoutBranchOrphan(branch, startpoint)
     
     expect(await gitBranchCurrent()).toBe(branch)
-    expect(() => {tool.exec('git rev-parse branch-orphan')}).toThrow()
+    expect(() => tool.exec(`git rev-parse ${ branch }`)).toThrow()
     
     const status = tool.exec('git status --short')
     expect(status).not.toBe('')

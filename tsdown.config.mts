@@ -9,7 +9,8 @@ const config: UserConfig[] = defineConfig([
     platform: 'node',
     nodeProtocol: true,
     shims: true,
-    dts: true
+    dts: true,
+    publint: true,
   },
 ] satisfies UserConfig[])
 

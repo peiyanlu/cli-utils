@@ -1,7 +1,7 @@
 import { gitReset, gitResetSync } from './raw.js'
 
 
-export const headArg = (count = 1) => {
+export const headArg = (count = 1): string => {
   if (count < 0) throw new RangeError('count must be >= 0')
   return count === 0 ? 'HEAD' : `HEAD~${ count }`
 }
@@ -13,7 +13,7 @@ export const headArg = (count = 1) => {
  * - 未提交修改保持不变
  * @defaults `git reset --mixed HEAD~<count>`
  */
-export const gitResetMixed = async (count: number = 1) => {
+export const gitResetMixed = async (count: number = 1): Promise<void> => {
   await gitReset([ '--mixed', headArg(count) ])
 }
 
@@ -23,7 +23,7 @@ export const gitResetMixed = async (count: number = 1) => {
  * - 未提交修改会丢失
  * @defaults `git reset --hard HEAD~<count>`
  */
-export const gitResetHard = async (count: number = 1) => {
+export const gitResetHard = async (count: number = 1): Promise<void> => {
   await gitReset([ '--hard', headArg(count) ])
 }
 
@@ -33,7 +33,7 @@ export const gitResetHard = async (count: number = 1) => {
  * - 未提交修改保持不变
  * @defaults `git reset --soft HEAD~<count>`
  */
-export const gitResetSoft = async (count: number = 1) => {
+export const gitResetSoft = async (count: number = 1): Promise<void> => {
   await gitReset([ '--soft', headArg(count) ])
 }
 
@@ -43,27 +43,27 @@ export const gitResetSoft = async (count: number = 1) => {
  * - 若会覆盖工作区未提交修改则直接失败
  * @defaults `git reset --keep HEAD~<count>`
  */
-export const gitResetKeep = async (count: number = 1) => {
+export const gitResetKeep = async (count: number = 1): Promise<void> => {
   await gitReset([ '--keep', headArg(count) ])
 }
 
 
 /** {@link gitResetMixed} 的同步版本 */
-export const gitResetMixedSync = (count: number = 1) => {
+export const gitResetMixedSync = (count: number = 1): void => {
   gitResetSync([ '--mixed', headArg(count) ])
 }
 
 /** {@link gitResetHard} 的同步版本 */
-export const gitResetHardSync = (count: number = 1) => {
+export const gitResetHardSync = (count: number = 1): void => {
   gitResetSync([ '--hard', headArg(count) ])
 }
 
 /** {@link gitResetSoft} 的同步版本 */
-export const gitResetSoftSync = (count: number = 1) => {
+export const gitResetSoftSync = (count: number = 1): void => {
   gitResetSync([ '--soft', headArg(count) ])
 }
 
 /** {@link gitResetKeep} 的同步版本 */
-export const gitResetKeepSync = (count: number = 1) => {
+export const gitResetKeepSync = (count: number = 1): void => {
   gitResetSync([ '--keep', headArg(count) ])
 }

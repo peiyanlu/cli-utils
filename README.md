@@ -1,12 +1,14 @@
 # @peiyanlu/cli-utils
 
 
-[![module](https://img.shields.io/badge/package-ESM--CJS-FFE536.svg)](https://nodejs.org/api/esm.html)
+[![module](https://img.shields.io/badge/package-ESM--CJS-FFE536.svg?logo=npm)](https://nodejs.org/api/esm.html)
 [![npm](https://img.shields.io/npm/v/@peiyanlu/cli-utils.svg)](https://npmjs.com/package/@peiyanlu/cli-utils)
+[![license](https://img.shields.io/npm/l/@peiyanlu/cli-utils.svg)](https://npmjs.com/package/@peiyanlu/cli-utils)
+[![downloads](https://img.shields.io/npm/dm/@peiyanlu/cli-utils.svg)](https://npmjs.com/package/@peiyanlu/cli-utils)
 [![node](https://img.shields.io/node/v/@peiyanlu/cli-utils.svg)](https://nodejs.org)
 [![size](https://packagephobia.com/badge?p=@peiyanlu/cli-utils)](https://packagephobia.com/result?p=@peiyanlu/cli-utils)
 [![deps](https://img.shields.io/librariesio/release/npm/@peiyanlu/cli-utils)](https://libraries.io/npm/%40peiyanlu%2Fcli-utils)
-[![build](https://img.shields.io/github/actions/workflow/status/peiyanlu/cli-utils/test.yaml?branch=master)](https://github.com/peiyanlu/cli-utils/actions)
+[![build](https://img.shields.io/github/actions/workflow/status/peiyanlu/cli-utils/test.yaml?branch=master&logo=github)](https://github.com/peiyanlu/cli-utils/actions)
 [![coverage](https://coveralls.io/repos/github/peiyanlu/cli-utils/badge.svg?branch=master)](https://coveralls.io/github/peiyanlu/cli-utils?branch=master)
 
 Shared utils for building interactive Node.js CLI applications.

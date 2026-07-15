@@ -8,7 +8,7 @@ import { gitRestore } from './raw.js'
  * - 不会改变提交历史（HEAD）
  * @defaults `git restore --source=HEAD --staged --worktree <file>`
  */
-export const gitDiscardFile = async (file: string) => {
+export const gitDiscardFile = async (file: string): Promise<void> => {
   // await gitCheckout([ 'HEAD', '--', file ])
   await gitRestore([ '--staged', '--worktree', '--source=HEAD', file ])
 }
@@ -20,8 +20,7 @@ export const gitDiscardFile = async (file: string) => {
  * - 不会删除未跟踪文件（untracked files）
  * @defaults `git restore --source=HEAD --staged --worktree .`
  */
-export const gitDiscardAll = async () => {
+export const gitDiscardAll = async (): Promise<void> => {
   // await gitCheckout([ 'HEAD', '--', '.' ])
   await gitRestore([ '--staged', '--worktree', '--source=HEAD', '.' ])
 }
-

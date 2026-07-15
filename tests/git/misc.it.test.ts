@@ -117,6 +117,8 @@ describe('git misc integration', () => {
     it('should return true when the current branch has an upstream', async () => {
       await manager.prepare(3)
       
+      expect(await hasUpstream('master')).toBe(true)
+      expect(await hasUpstream('master')).toBe(await hasUpstream())
       expect(await hasUpstream()).toBe(true)
     })
   })
@@ -165,7 +167,7 @@ describe('git misc integration', () => {
     it('fetchAllPrune should execute successfully', async () => {
       await manager.prepare(3)
       
-      await expect(fetchAllPrune()).resolves.toBe('')
+      await expect(fetchAllPrune()).resolves.toBeUndefined()
     })
     
     it('should remove stale remote-tracking refs via prune after remote deletion', async () => {
@@ -300,6 +302,7 @@ describe('git misc integration', () => {
     
     expect(await countCommitsSince('v1.0.0')).toBe(1)
     expect(await countCommitsSince()).toBe(2)
+    expect(await countCommitsSince('v3.0.0')).toBe(0)
   })
   
   it('should isRemoteName', async () => {

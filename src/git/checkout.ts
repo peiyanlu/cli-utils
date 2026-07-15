@@ -11,7 +11,7 @@ import { gitCheckout } from './raw.js'
  * git checkout <branch>
  * ```
  */
-export const gitCheckoutBranch = async (branch: string, startpoint?: string) => {
+export const gitCheckoutBranch = async (branch: string, startpoint?: string): Promise<void> => {
   await gitCheckout(
     [ '-b', branch, ...(startpoint ? [ startpoint ] : []) ],
     { error: 'throw' },
@@ -29,7 +29,7 @@ export const gitCheckoutBranch = async (branch: string, startpoint?: string) => 
  * git checkout <branch>
  * ```
  */
-export const gitCheckoutBranchForce = async (branch: string, startpoint?: string) => {
+export const gitCheckoutBranchForce = async (branch: string, startpoint?: string): Promise<void> => {
   await gitCheckout([ '-B', branch, ...(startpoint ? [ startpoint ] : []) ])
 }
 
@@ -37,6 +37,6 @@ export const gitCheckoutBranchForce = async (branch: string, startpoint?: string
  * 创建孤儿分支
  * @defaults `git checkout --orphan <branch>`
  */
-export const gitCheckoutBranchOrphan = async (branch: string, startpoint?: string) => {
+export const gitCheckoutBranchOrphan = async (branch: string, startpoint?: string): Promise<void> => {
   await gitCheckout([ '--orphan', branch, ...(startpoint ? [ startpoint ] : []) ])
 }

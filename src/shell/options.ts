@@ -1,5 +1,5 @@
 import { AsyncLocalStorage } from 'node:async_hooks'
-import { BaseOptions, ExtraOptions } from './types.js'
+import type { BaseOptions, ExtraOptions } from './types.js'
 
 
 class Options<Opts extends object> {
@@ -10,11 +10,11 @@ class Options<Opts extends object> {
     return this.storage.getStore() ?? {}
   }
   
-  configure(opts: Partial<Opts>) {
+  configure(opts: Partial<Opts>): void {
     Object.assign(this.global, opts)
   }
   
-  resolve<T extends object>(opts?: Partial<T>) {
+  resolve<T extends object>(opts?: Partial<T>): Partial<Opts> & T {
     return {
       ...this.global,
       ...this.stored,
@@ -34,4 +34,4 @@ class Options<Opts extends object> {
 }
 
 
-export const shell = new Options<BaseOptions & ExtraOptions>()
+export const shell: Options<BaseOptions & ExtraOptions> = new Options<BaseOptions & ExtraOptions>()
