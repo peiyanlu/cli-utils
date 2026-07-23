@@ -1,3 +1,14 @@
+## <small>[0.0.14](https://github.com/peiyanlu/cli-utils/compare/0.0.13...0.0.14) (2026-07-23)</small>
+
+### 🐛 Bug 修复
+
+* **ci:** 为测试工作流配置 Git 用户信息 ([49ae7c9](https://github.com/peiyanlu/cli-utils/commit/49ae7c9933bcfc58c8be2e5733feb5818d4e716a))
+
+### ♻️ 代码重构
+
+* 适配 isolatedDeclarations 类型声明要求 ([c3392b8](https://github.com/peiyanlu/cli-utils/commit/c3392b83ee9626b03aa1322eb1f457f6934349d8))
+* 重命名 shell 同步函数 ([7d0710b](https://github.com/peiyanlu/cli-utils/commit/7d0710bf7211a62c7ba4989cbeee0a2af1947893))
+
 ## <small>[0.0.13](https://github.com/peiyanlu/cli-utils/compare/0.0.12...0.0.13) (2026-07-02)</small>
 
 ### ♻️ 代码重构
