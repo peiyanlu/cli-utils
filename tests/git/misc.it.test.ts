@@ -1,4 +1,4 @@
-import { createTempDir, GitTool, SetupManager } from '@peiyanlu/test-tools'
+import { createTempWorkspace, GitTool, SetupManager } from '@peiyanlu/test-tools'
 import { rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
@@ -25,11 +25,11 @@ import {
 } from '../../src/index.js'
 
 
-const TEMP_DIR = createTempDir()
+const { path: TEMP_DIR } = createTempWorkspace()
 let tool: GitTool
 const manager = new SetupManager()
 const remoteDir = join(TEMP_DIR, '..', 'test-misc-remote.git')
-const CLONE_DIR = createTempDir()
+const { path: CLONE_DIR } = createTempWorkspace()
 
 
 shell.configure({
@@ -339,7 +339,7 @@ describe('git misc integration', () => {
   })
   
   it('initBareRepo/initRepo', async () => {
-    const DIR = createTempDir()
+    const { path: DIR } = createTempWorkspace()
     const remote = join(DIR, '..', 'remote-init.git')
     
     const cwd = process.cwd()

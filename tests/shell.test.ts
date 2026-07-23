@@ -1,4 +1,4 @@
-import { createTempDir } from '@peiyanlu/test-tools'
+import { createTempWorkspace } from '@peiyanlu/test-tools'
 import { readFileSync, rmSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -19,7 +19,7 @@ import {
 } from '../src/index.js'
 
 
-const TEMP_DIR = createTempDir()
+const { path: TEMP_DIR } = createTempWorkspace()
 const nodePrint = (code: string) => [ '-e', code ]
 
 
@@ -278,7 +278,7 @@ describe('shell options and wrappers', () => {
   })
   
   it('runNpm and runNpmSync delegate to npm execution', async () => {
-    const dir = createTempDir()
+    const { path: dir } = createTempWorkspace()
     const file = join(dir, 'package.json')
     await writeFile(file, '{"version": "1.0.0"}')
     

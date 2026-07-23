@@ -180,17 +180,20 @@ export const isOtpError = (err: unknown): boolean =>
 /** 发布是否可以成功 */
 export const canPublish = async (registry?: string): Promise<boolean> => {
   const res = await runNpm(
-    [ 'publish', '--dry-run', '--no-git-checks', '--access', 'public', ...registryArg(registry) ],
+    [ 'publish', '--dry-run', '--access', 'public', ...registryArg(registry) ],
     { error: 'throw' },
   ).catch((err: Error) => err)
   
-  if (!(res instanceof Error)) {
+  const allowedErr = (err: Error) => {
+    const matches = [ /previously published versions/i, /cannot publish over/i ]
+    return matches.some(reg => reg.test(err.message))
+  }
+  
+  if (!(res instanceof Error) || allowedErr(res)) {
     return true
   }
   
-  const matches = [ /previously published versions/i, /cannot publish over/i ]
-  
-  return matches.some(reg => reg.test(res.message))
+  throw res
 }
 
 /** 生成 npm 包指定版本的详情页地址 */

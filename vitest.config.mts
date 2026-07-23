@@ -23,6 +23,6 @@ export default defineConfig({
     ],
     env: {
       // FORCE_COLOR: '0'
-    }
+    },
   },
 })

@@ -28,12 +28,12 @@
   },
   "devDependencies": {
     "@peiyanlu/release": "^1.1.2",
-    "@peiyanlu/test-tools": "^0.0.2",
+    "@peiyanlu/test-tools": "^0.0.4",
     "@types/node": "^24.13.3",
     "@types/semver": "^7.7.1",
     "@vitest/coverage-v8": "^4.1.10",
     "publint": "^0.3.21",
-    "tsdown": "^0.22.7",
+    "tsdown": "^0.22.13",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10"
   },

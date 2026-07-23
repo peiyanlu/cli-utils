@@ -1,4 +1,4 @@
-import { createTempDir } from '@peiyanlu/test-tools'
+import { createTempWorkspace } from '@peiyanlu/test-tools'
 import { existsSync } from 'node:fs'
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -6,7 +6,7 @@ import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { copyDirAsync, editFile, editJsonFile, emptyDir, isEmpty, readJsonFile, readSubDirs } from '../src/index.js'
 
 
-const TEMP_DIR = createTempDir()
+const { path: TEMP_DIR } = createTempWorkspace()
 
 
 beforeEach(async () => {

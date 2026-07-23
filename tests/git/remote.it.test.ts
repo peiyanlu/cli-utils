@@ -1,4 +1,4 @@
-import { createTempDir, GitTool, SetupManager } from '@peiyanlu/test-tools'
+import { createTempWorkspace, GitTool, SetupManager } from '@peiyanlu/test-tools'
 import { rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
@@ -17,7 +17,7 @@ import {
 } from '../../src/index.js'
 
 
-const TEMP_DIR = createTempDir()
+const { path: TEMP_DIR } = createTempWorkspace()
 let tool: GitTool
 const manager = new SetupManager()
 

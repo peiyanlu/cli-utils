@@ -438,12 +438,14 @@ describe('canPublish', () => {
   })
   
   it('should return false for other errors', async () => {
-    mockRunNpm.mockRejectedValue(
-      new Error('network error'),
-    )
+    mockRunNpm.mockRejectedValue(new Error('network error'))
     
-    expect(await npm.canPublish())
-      .toBe(false)
+    await expect(() => npm.canPublish()).rejects.toThrow()
+    
+    mockRunNpm.mockClear()
+    mockRunNpm.mockRejectedValue(new Error('previously published versions'))
+    
+    expect(await npm.canPublish()).toBe(true)
   })
 })
 
