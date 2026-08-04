@@ -1,4 +1,4 @@
-import { createTempWorkspace, GitTool, SetupManager } from '@peiyanlu/test-tools'
+import { GitTool, useToolWithManager } from '@peiyanlu/test-tools'
 import { afterAll, describe, expect, it } from 'vitest'
 import {
   gitBranchCurrent,
@@ -9,65 +9,53 @@ import {
 } from '../../src/index.js'
 
 
-const { path: TEMP_DIR } = createTempWorkspace()
-let tool: GitTool
-const manager = new SetupManager()
-
+const { manager, tool, tempDir: TEMP_DIR } = useToolWithManager(
+  GitTool,
+  [
+    () => { // 1
+      tool.init()
+      tool.writeFileSync('./package.json', '{"version": "1.0.0"}')
+      tool.stage()
+      tool.commit('feat: first commit')
+    },
+    () => { // 2 feature
+      tool.exec('git checkout master')
+      tool.exec('git checkout -b feature')
+      tool.writeFileSync('./a.txt', 'hello')
+      tool.stage()
+      tool.commit('feat(feature): add a.txt')
+      tool.exec('git checkout master')
+    },
+    () => { // 3
+      tool.exec('git checkout master')
+      tool.writeFileSync('./b.txt', 'world')
+      tool.stage()
+      tool.commit('feat: second commit')
+      tool.exec('git tag v1.0.0')
+    },
+    () => { // 4 feature2
+      tool.exec('git checkout master')
+      tool.exec('git checkout -b feature2')
+      tool.writeFileSync('./a.txt', 'hello')
+      tool.stage()
+      tool.commit('feat(feature2): add a.txt')
+      tool.exec('git checkout master')
+    },
+    () => { // 5
+      tool.exec('git checkout master')
+      tool.writeFileSync('./c.txt', '!')
+      tool.stage()
+      tool.commit('feat: third commit')
+    },
+    () => { // 6
+      tool.commit('feat: fourth commit')
+    },
+  ],
+  afterAll,
+)
 
 shell.configure({
   cwd: TEMP_DIR,
-})
-
-
-manager.setSetup([
-  () => { // 1
-    tool = new GitTool(TEMP_DIR)
-    
-    tool.init()
-    tool.writeFileSync('./package.json', '{"version": "1.0.0"}')
-    tool.stage()
-    tool.commit('feat: first commit')
-  },
-  () => { // 2 feature
-    tool.exec('git checkout master')
-    tool.exec('git checkout -b feature')
-    tool.writeFileSync('./a.txt', 'hello')
-    tool.stage()
-    tool.commit('feat(feature): add a.txt')
-    tool.exec('git checkout master')
-  },
-  () => { // 3
-    tool.exec('git checkout master')
-    tool.writeFileSync('./b.txt', 'world')
-    tool.stage()
-    tool.commit('feat: second commit')
-    tool.exec('git tag v1.0.0')
-  },
-  () => { // 4 feature2
-    tool.exec('git checkout master')
-    tool.exec('git checkout -b feature2')
-    tool.writeFileSync('./a.txt', 'hello')
-    tool.stage()
-    tool.commit('feat(feature2): add a.txt')
-    tool.exec('git checkout master')
-  },
-  () => { // 5
-    tool.exec('git checkout master')
-    tool.writeFileSync('./c.txt', '!')
-    tool.stage()
-    tool.commit('feat: third commit')
-  },
-  () => { // 6
-    tool.commit('feat: fourth commit')
-  },
-])
-
-manager.setTeardown(() => {
-  tool?.cleanup(true)
-})
-
-afterAll(() => {
-  tool?.cleanup()
 })
 
 

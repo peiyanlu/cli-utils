@@ -1,4 +1,4 @@
-import { createTempWorkspace, GitTool, SetupManager } from '@peiyanlu/test-tools'
+import { GitTool, useToolWithManager } from '@peiyanlu/test-tools'
 import { rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
@@ -15,63 +15,51 @@ import {
 } from '../../src/index.js'
 
 
-const { path: TEMP_DIR } = createTempWorkspace()
-let tool: GitTool
-const manager = new SetupManager()
-
+const { manager, tool, tempDir: TEMP_DIR } = useToolWithManager(
+  GitTool,
+  [
+    () => { // 1
+      tool.init()
+      tool.writeFileSync('./package.json', '{"version": "1.0.0"}')
+      tool.stage()
+      tool.commit('feat: first commit')
+    },
+    () => { // 2
+      tool.exec('git checkout -b feature')
+    },
+    () => { // 3
+      tool.exec('git checkout --detach')
+    },
+    () => { // 4
+      tool.exec('git checkout -b old-name')
+    },
+    () => { // 5
+      tool.exec('git checkout -b old-m-name')
+      tool.exec('git checkout master')
+      tool.exec('git checkout -b new-m-name')
+      tool.exec('git checkout old-m-name')
+    },
+    () => { // 6
+      tool.exec('git checkout -b feature1')
+      tool.exec('git checkout master')
+      tool.exec('git merge feature1')
+    },
+    () => { // 7
+      tool.exec('git checkout -b feature2')
+      tool.writeFileSync('./test.txt', 'hello')
+      tool.exec('git add .')
+      tool.exec('git commit -m "feat: test"')
+      tool.exec('git checkout master')
+    },
+    () => { // 8
+      tool.exec('git update-ref -d HEAD')
+    },
+  ],
+  afterAll,
+)
 
 shell.configure({
   cwd: TEMP_DIR,
-})
-
-
-manager.setSetup([
-  () => { // 1
-    tool = new GitTool(TEMP_DIR)
-    
-    tool.init()
-    tool.writeFileSync('./package.json', '{"version": "1.0.0"}')
-    tool.stage()
-    tool.commit('feat: first commit')
-  },
-  () => { // 2
-    tool.exec('git checkout -b feature')
-  },
-  () => { // 3
-    tool.exec('git checkout --detach')
-  },
-  () => { // 4
-    tool.exec('git checkout -b old-name')
-  },
-  () => { // 5
-    tool.exec('git checkout -b old-m-name')
-    tool.exec('git checkout master')
-    tool.exec('git checkout -b new-m-name')
-    tool.exec('git checkout old-m-name')
-  },
-  () => { // 6
-    tool.exec('git checkout -b feature1')
-    tool.exec('git checkout master')
-    tool.exec('git merge feature1')
-  },
-  () => { // 7
-    tool.exec('git checkout -b feature2')
-    tool.writeFileSync('./test.txt', 'hello')
-    tool.exec('git add .')
-    tool.exec('git commit -m "feat: test"')
-    tool.exec('git checkout master')
-  },
-  () => { // 8
-    tool.exec('git update-ref -d HEAD')
-  },
-])
-
-manager.setTeardown(() => {
-  tool?.cleanup(true)
-})
-
-afterAll(() => {
-  tool?.cleanup()
 })
 
 

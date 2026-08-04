@@ -1,4 +1,4 @@
-import { createTempWorkspace, GitTool, SetupManager } from '@peiyanlu/test-tools'
+import { GitTool, useToolWithManager } from '@peiyanlu/test-tools'
 import { afterAll, describe, expect, it } from 'vitest'
 import {
   gitCommit,
@@ -10,41 +10,29 @@ import {
 } from '../../src/index.js'
 
 
-const { path: TEMP_DIR } = createTempWorkspace()
-let tool: GitTool
-const manager = new SetupManager()
-
+const { manager, tool, tempDir: TEMP_DIR } = useToolWithManager(
+  GitTool,
+  [
+    () => { // 1
+      tool.init()
+      tool.writeFileSync('./package.json', '{"version": "1.0.0"}')
+      tool.stage()
+    },
+    () => { // 2
+      tool.exec('git update-ref -d HEAD')
+      tool.writeFileSync('./a.txt', 'hello')
+      tool.stage()
+    },
+    () => { // 3
+      tool.exec('git update-ref -d HEAD')
+      tool.commit('feat: before empty commit')
+    },
+  ],
+  afterAll,
+)
 
 shell.configure({
   cwd: TEMP_DIR,
-})
-
-
-manager.setSetup([
-  () => { // 1
-    tool = new GitTool(TEMP_DIR)
-    
-    tool.init()
-    tool.writeFileSync('./package.json', '{"version": "1.0.0"}')
-    tool.stage()
-  },
-  () => { // 2
-    tool.exec('git update-ref -d HEAD')
-    tool.writeFileSync('./a.txt', 'hello')
-    tool.stage()
-  },
-  () => { // 3
-    tool.exec('git update-ref -d HEAD')
-    tool.commit('feat: before empty commit')
-  },
-])
-
-manager.setTeardown(() => {
-  tool?.cleanup(true)
-})
-
-afterAll(() => {
-  tool?.cleanup()
 })
 
 

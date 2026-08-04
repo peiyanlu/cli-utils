@@ -12,7 +12,7 @@ import {
 } from '../src/index.js'
 
 
-const { path: TEMP_DIR } = createTempWorkspace()
+const { path: TEMP_DIR, remove } = createTempWorkspace()
 
 
 beforeEach(async () => {
@@ -20,8 +20,8 @@ beforeEach(async () => {
   await mkdir(TEMP_DIR, { recursive: true })
 })
 
-afterAll(async () => {
-  await rm(TEMP_DIR, { recursive: true })
+afterAll(() => {
+  remove()
 })
 
 
@@ -49,6 +49,10 @@ describe('package name utils', () => {
   
   it('toValidProjectName', () => {
     expect(toValidProjectName('demo///')).toBe('demo')
+    expect(toValidProjectName('demo/demo-1')).toBe('demo/demo-1')
+    expect(toValidProjectName('<demo>/demo-2')).toBe('demo/demo-2')
+    expect(toValidProjectName('"demo"/demo-3')).toBe('demo/demo-3')
+    expect(toValidProjectName('demo\\|?*:"/demo-3')).toBe('demo/demo-3')
   })
 })
 

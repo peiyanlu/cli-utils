@@ -1,4 +1,4 @@
-import { createTempWorkspace, GitTool, SetupManager } from '@peiyanlu/test-tools'
+import { GitTool, useToolWithManager } from '@peiyanlu/test-tools'
 import { afterAll, describe, expect, it } from 'vitest'
 import {
   gitRestoreAll,
@@ -14,47 +14,35 @@ import {
 } from '../../src/index.js'
 
 
-const { path: TEMP_DIR } = createTempWorkspace()
-let tool: GitTool
-const manager = new SetupManager()
-
+const { manager, tool, tempDir: TEMP_DIR } = useToolWithManager(
+  GitTool,
+  [
+    () => { // 1
+      tool.init()
+      tool.commit('feat: first commit')
+    },
+    () => { // 2
+      tool.writeFileSync('a.txt', '1')
+      tool.writeFileSync('b.txt', '2')
+      tool.stage()
+    },
+    () => { // 3
+      tool.commit('feat: second commit')
+    },
+    () => { // 4
+      tool.writeFileSync('a.txt', '11')
+      tool.writeFileSync('b.txt', '22')
+      tool.stage()
+    },
+    () => { // 5
+      tool.commit('feat: third commit')
+    },
+  ],
+  afterAll,
+)
 
 shell.configure({
   cwd: TEMP_DIR,
-})
-
-
-manager.setSetup([
-  () => { // 1
-    tool = new GitTool(TEMP_DIR)
-    
-    tool.init()
-    tool.commit('feat: first commit')
-  },
-  () => { // 2
-    tool.writeFileSync('a.txt', '1')
-    tool.writeFileSync('b.txt', '2')
-    tool.stage()
-  },
-  () => { // 3
-    tool.commit('feat: second commit')
-  },
-  () => { // 4
-    tool.writeFileSync('a.txt', '11')
-    tool.writeFileSync('b.txt', '22')
-    tool.stage()
-  },
-  () => { // 5
-    tool.commit('feat: third commit')
-  },
-])
-
-manager.setTeardown(() => {
-  tool?.cleanup(true)
-})
-
-afterAll(() => {
-  tool?.cleanup()
 })
 
 

@@ -1,4 +1,4 @@
-import { createTempWorkspace, GitTool, SetupManager } from '@peiyanlu/test-tools'
+import { createTempWorkspace, GitTool, useToolWithManager } from '@peiyanlu/test-tools'
 import { rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
@@ -25,54 +25,50 @@ import {
 } from '../../src/index.js'
 
 
-const { path: TEMP_DIR } = createTempWorkspace()
-let tool: GitTool
-const manager = new SetupManager()
+const { manager, tool, tempDir: TEMP_DIR } = useToolWithManager(
+  GitTool,
+  [
+    () => { // 1
+      tool.init()
+      tool.initBare(remoteDir)
+      tool.exec(`git remote add origin ${ remoteDir }`)
+      
+      tool.writeFileSync('./package.json', '{"version": "1.0.0"}')
+      tool.stage()
+      tool.commit('feat: first commit')
+    },
+    () => { // 2
+      tool.exec(`git push origin master`)
+    },
+    () => { // 3
+      tool.exec(`git branch --set-upstream-to=origin/master`)
+    },
+    () => { // 4
+      tool.exec('git checkout -b feature')
+      tool.exec('git push -u origin feature')
+      tool.exec('git checkout master')
+    },
+    () => { // 5
+      tool.exec(`git clone ${ remoteDir } ${ CLONE_DIR }`)
+    },
+  ],
+  afterAll,
+  {
+    onTeardown: () => {
+      rmSync(remoteDir, { recursive: true })
+    },
+    onAfterAll: () => {
+      rmSync(remoteDir, { recursive: true })
+    },
+  },
+)
+
 const remoteDir = join(TEMP_DIR, '..', 'test-misc-remote.git')
-const { path: CLONE_DIR } = createTempWorkspace()
+const { path: CLONE_DIR, remove: removeClone } = createTempWorkspace()
 
 
 shell.configure({
   cwd: TEMP_DIR,
-})
-
-
-manager.setSetup([
-  () => { // 1
-    tool = new GitTool(TEMP_DIR)
-    
-    tool.init()
-    tool.initBare(remoteDir)
-    tool.exec(`git remote add origin ${ remoteDir }`)
-    
-    tool.writeFileSync('./package.json', '{"version": "1.0.0"}')
-    tool.stage()
-    tool.commit('feat: first commit')
-  },
-  () => { // 2
-    tool.exec(`git push origin master`)
-  },
-  () => { // 3
-    tool.exec(`git branch --set-upstream-to=origin/master`)
-  },
-  () => { // 4
-    tool.exec('git checkout -b feature')
-    tool.exec('git push -u origin feature')
-    tool.exec('git checkout master')
-  },
-  () => { // 5
-    tool.exec(`git clone ${ remoteDir } ${ CLONE_DIR }`)
-  },
-])
-
-manager.setTeardown(() => {
-  tool?.cleanup(true)
-  rmSync(remoteDir, { recursive: true })
-})
-
-afterAll(() => {
-  tool?.cleanup()
-  rmSync(remoteDir, { recursive: true })
 })
 
 
@@ -193,7 +189,7 @@ describe('git misc integration', () => {
       shell.configure({
         cwd: TEMP_DIR,
       })
-      rmSync(CLONE_DIR, { recursive: true })
+      removeClone()
     })
   })
   

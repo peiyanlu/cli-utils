@@ -1,19 +1,5 @@
-import { createTempWorkspace } from '@peiyanlu/test-tools'
-import { rm } from 'node:fs/promises'
-import { afterAll, beforeEach, describe, expect, it } from 'vitest'
-import { emptyDir, eol, isTestFile, parseArgs, splitLines, stringifyArgs, trimTemplate } from '../src/index.js'
-
-
-const { path: TEMP_DIR } = createTempWorkspace()
-
-
-beforeEach(async () => {
-  await emptyDir(TEMP_DIR)
-})
-
-afterAll(async () => {
-  await rm(TEMP_DIR, { recursive: true })
-})
+import { describe, expect, it } from 'vitest'
+import { eol, isTestFile, parseArgs, splitLines, stringifyArgs, trimTemplate } from '../src/index.js'
 
 
 describe('isTestFile', () => {

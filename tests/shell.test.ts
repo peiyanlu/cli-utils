@@ -19,7 +19,7 @@ import {
 } from '../src/index.js'
 
 
-const { path: TEMP_DIR } = createTempWorkspace()
+const { path: TEMP_DIR, remove } = createTempWorkspace()
 const nodePrint = (code: string) => [ '-e', code ]
 
 
@@ -28,11 +28,10 @@ afterEach(() => {
     cwd: undefined,
     env: undefined,
   })
-  vi.restoreAllMocks()
 })
 
 afterAll(() => {
-  rmSync(TEMP_DIR, { recursive: true, force: true })
+  remove()
 })
 
 

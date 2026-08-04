@@ -4,7 +4,6 @@
   "description": "Shared utils for building interactive Node.js CLI applications.",
   "license": "MIT",
   "type": "module",
-  "private": false,
   "exports": {
     ".": {
       "import": {
@@ -26,21 +25,21 @@
     "test": "vitest run",
     "test:cov": "vitest run --coverage"
   },
+  "dependencies": {
+    "@peiyanlu/ts-utils": "latest",
+    "ansis": "^4.3.1",
+    "semver": "^7.8.5"
+  },
   "devDependencies": {
-    "@peiyanlu/release": "^1.1.2",
-    "@peiyanlu/test-tools": "^0.0.4",
+    "@peiyanlu/release": "^1.2.0",
+    "@peiyanlu/test-tools": "^0.0.7",
     "@types/node": "^24.13.3",
     "@types/semver": "^7.7.1",
     "@vitest/coverage-v8": "^4.1.10",
-    "publint": "^0.3.21",
-    "tsdown": "^0.22.13",
+    "publint": "^0.3.22",
+    "tsdown": "^0.22.14",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10"
-  },
-  "dependencies": {
-    "@peiyanlu/ts-utils": "^0.0.10",
-    "ansis": "^4.3.1",
-    "semver": "^7.8.5"
   },
   "author": {
     "name": "YanluPei",

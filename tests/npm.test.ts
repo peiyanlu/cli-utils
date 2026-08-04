@@ -16,12 +16,6 @@ vi.mock('../src/file-dir.js', () => ({
 const mockRunNpm = vi.mocked(runNpm)
 const mockReadJsonFile = vi.mocked(readJsonFile)
 
-beforeEach(() => {
-  vi.clearAllMocks()
-  vi.restoreAllMocks()
-  mockRunNpm.mockReset()
-  mockReadJsonFile.mockReset()
-})
 
 describe('accessArg', () => {
   it('should use default access', () => {

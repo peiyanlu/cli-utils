@@ -1,4 +1,4 @@
-import { createTempWorkspace, GitTool, SetupManager } from '@peiyanlu/test-tools'
+import { GitTool, useToolWithManager } from '@peiyanlu/test-tools'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
 import {
@@ -12,44 +12,30 @@ import {
 } from '../../src/index.js'
 
 
-const { path: TEMP_DIR } = createTempWorkspace()
-let tool: GitTool
-const manager = new SetupManager()
-
-const env = {
-  GIT_CONFIG_GLOBAL: join(TEMP_DIR, `.gitconfig`),
-}
+const { manager, tool, tempDir } = useToolWithManager(
+  (cwd) => new GitTool(cwd, { GIT_CONFIG_GLOBAL: join(cwd, `.gitconfig`) }),
+  [
+    () => { // 1
+      tool.init()
+    },
+    () => { // 2
+      tool.exec('git config user.name tester-local')
+      tool.exec('git config user.email test-local@test.com')
+    },
+    () => { // 3
+      tool.exec('git config --global user.name tester-global')
+      tool.exec('git config --global user.email test-global@test.com')
+    },
+  ],
+  afterAll,
+)
 
 shell.configure({
-  cwd: TEMP_DIR,
+  cwd: tempDir,
   env: {
     ...process.env,
-    ...env,
+    GIT_CONFIG_GLOBAL: join(tempDir, `.gitconfig`),
   },
-})
-
-manager.setSetup([
-  () => { // 1
-    tool = new GitTool(TEMP_DIR, env)
-    
-    tool.init()
-  },
-  () => { // 2
-    tool.exec('git config user.name tester-local')
-    tool.exec('git config user.email test-local@test.com')
-  },
-  () => { // 3
-    tool.exec('git config --global user.name tester-global')
-    tool.exec('git config --global user.email test-global@test.com')
-  },
-])
-
-manager.setTeardown(() => {
-  tool?.cleanup(true)
-})
-
-afterAll(() => {
-  tool?.cleanup()
 })
 
 

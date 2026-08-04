@@ -1,4 +1,4 @@
-import { createTempWorkspace, GitTool, SetupManager } from '@peiyanlu/test-tools'
+import { GitTool, useToolWithManager } from '@peiyanlu/test-tools'
 import { rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { afterAll, describe, expect, it } from 'vitest'
@@ -17,41 +17,36 @@ import {
 } from '../../src/index.js'
 
 
-const { path: TEMP_DIR } = createTempWorkspace()
-let tool: GitTool
-const manager = new SetupManager()
+const { manager, tool, tempDir: TEMP_DIR } = useToolWithManager(
+  GitTool,
+  [
+    () => { // 1
+      tool.exec(`git init --bare ${ remoteDir1 }`)
+      tool.exec(`git init --bare ${ remoteDir2 }`)
+      tool.init()
+    },
+    () => { // 2
+      tool.exec(`git remote add upstream ${ remoteDir2 }`)
+    },
+  ],
+  afterAll,
+  {
+    onTeardown: () => {
+      rmSync(remoteDir1, { recursive: true })
+      rmSync(remoteDir2, { recursive: true })
+    },
+    onAfterAll: () => {
+      rmSync(remoteDir1, { recursive: true })
+      rmSync(remoteDir2, { recursive: true })
+    },
+  },
+)
 
 const remoteDir1 = join(TEMP_DIR, '..', 'test-remote-origin.git')
 const remoteDir2 = join(TEMP_DIR, '..', 'test-remote-upstream.git')
 
 shell.configure({
   cwd: TEMP_DIR,
-})
-
-
-manager.setSetup([
-  () => { // 1
-    tool = new GitTool(TEMP_DIR)
-    
-    tool.exec(`git init --bare ${ remoteDir1 }`)
-    tool.exec(`git init --bare ${ remoteDir2 }`)
-    tool.init()
-  },
-  () => { // 2
-    tool.exec(`git remote add upstream ${ remoteDir2 }`)
-  },
-])
-
-manager.setTeardown(() => {
-  tool?.cleanup(true)
-  rmSync(remoteDir1, { recursive: true })
-  rmSync(remoteDir2, { recursive: true })
-})
-
-afterAll(() => {
-  tool?.cleanup()
-  rmSync(remoteDir1, { recursive: true })
-  rmSync(remoteDir2, { recursive: true })
 })
 
 

@@ -1,41 +1,29 @@
-import { createTempWorkspace, GitTool, SetupManager } from '@peiyanlu/test-tools'
+import { GitTool, useToolWithManager } from '@peiyanlu/test-tools'
 import { afterAll, expect, it } from 'vitest'
 import { gitReset, gitResetSync, gitRestore, gitRestoreSync, shell } from '../../src/index.js'
 
 
-const { path: TEMP_DIR } = createTempWorkspace()
-let tool: GitTool
-const manager = new SetupManager()
-
+const { manager, tool, tempDir: TEMP_DIR } = useToolWithManager(
+  GitTool,
+  [
+    () => { // 1
+      tool.init()
+      tool.commit('feat: first commit')
+    },
+    () => { // 2
+      tool.writeFileSync('a.txt', '1')
+      tool.writeFileSync('b.txt', '2')
+      tool.stage()
+    },
+    () => { // 3
+      tool.commit('feat: second commit')
+    },
+  ],
+  afterAll,
+)
 
 shell.configure({
   cwd: TEMP_DIR,
-})
-
-
-manager.setSetup([
-  () => { // 1
-    tool = new GitTool(TEMP_DIR)
-    
-    tool.init()
-    tool.commit('feat: first commit')
-  },
-  () => { // 2
-    tool.writeFileSync('a.txt', '1')
-    tool.writeFileSync('b.txt', '2')
-    tool.stage()
-  },
-  () => { // 3
-    tool.commit('feat: second commit')
-  },
-])
-
-manager.setTeardown(() => {
-  tool?.cleanup(true)
-})
-
-afterAll(() => {
-  tool?.cleanup()
 })
 
 
