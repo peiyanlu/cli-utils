@@ -9,10 +9,10 @@ export interface PackageJson {
   publishConfig?: {
     access?: string
     registry?: string
-    [key: string]: unknown
+    [key: string]: any
   }
   
-  [key: string]: unknown
+  [key: string]: any
 }
 
 export interface PackageContext {
@@ -37,6 +37,7 @@ export const toValidPackageName = (name: string): string => name
 
 export const toValidProjectName = (name: string): string => name
   .trim()
+  .replace(/[<>:"\\|?*]/g, '')
   .replace(/\/+$/g, '')
 
 export const getPackageInfo = (pkgName: string, getPkgDir: (pkg: string) => string): PackageContext => {
