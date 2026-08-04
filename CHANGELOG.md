@@ -1,3 +1,9 @@
+## <small>[0.0.15](https://github.com/peiyanlu/cli-utils/compare/0.0.14...0.0.15) (2026-08-04)</small>
+
+### 🐛 Bug 修复
+
+* 修复类型定义和项目名称验证 ([2442b79](https://github.com/peiyanlu/cli-utils/commit/2442b79cc343f92340696944a5f0410187bc2330))
+
 ## <small>[0.0.14](https://github.com/peiyanlu/cli-utils/compare/0.0.13...0.0.14) (2026-07-23)</small>
 
 ### 🐛 Bug 修复
